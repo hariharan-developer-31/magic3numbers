@@ -155,10 +155,10 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
         <div
           role="dialog"
           aria-modal="true"
-          className="lg:hidden fixed inset-0 z-50 bg-[#0D0B1A] text-white flex flex-col justify-between p-6 sm:p-8 animate-fade-in"
+          className="lg:hidden fixed inset-0 z-50 bg-[#0D0B1A] text-white flex flex-col p-6 sm:p-8 animate-fade-in"
         >
           {/* Top Bar with Brand Logo and Close Button */}
-          <div className="flex items-center justify-between pb-4 border-b border-white/10">
+          <div className="flex items-center justify-between pb-4 border-b border-white/10 flex-shrink-0">
             <BrandLogo textColor="text-white" />
             <button
               onClick={() => setMobileMenuOpen(false)}
@@ -169,8 +169,8 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
             </button>
           </div>
 
-          {/* Navigation Links with Arrow Indicators - removed excess top space */}
-          <div className="flex flex-col gap-3 pt-3 pb-4 overflow-y-auto">
+          {/* Navigation Links with Arrow Indicators - neatly aligned directly below top bar */}
+          <div className="flex flex-col gap-3 pt-5 sm:pt-6 pb-4 overflow-y-auto">
             <button
               onClick={() => scrollTo("three-pillars")}
               className="flex items-center justify-between text-left py-3 px-4 rounded-2xl hover:bg-white/5 border border-white/10 text-base font-semibold transition-colors"
@@ -208,8 +208,8 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
             </button>
           </div>
 
-          {/* Bottom Action Section */}
-          <div className="pt-4 border-t border-white/10">
+          {/* Bottom Action Section - anchored to bottom */}
+          <div className="mt-auto pt-4 border-t border-white/10 flex-shrink-0">
             <button
               onClick={() => scrollTo("profile-generator")}
               className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-[#5B3BD1] text-white text-sm font-semibold tracking-wider uppercase shadow-xl shadow-[#5B3BD1]/40 active:scale-98"
