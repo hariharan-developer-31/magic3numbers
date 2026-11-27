@@ -329,28 +329,21 @@ export default function AdminPage() {
   return (
     <main className="min-h-screen w-full bg-[#E7E3FB] text-[#0D0B1A] pb-16">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-[#5B3BD1]/15 px-4 sm:px-8 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="p-2 rounded-xl hover:bg-[#E7E3FB] text-[#0D0B1A] transition-colors"
-              title="Return to site"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <div className="flex items-center gap-3">
-              <BrandLogo className="w-8 h-8" showText={true} />
-              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-[#5B3BD1] text-white">
-                Admin Panel
-              </span>
-            </div>
+      <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-[#5B3BD1]/15 px-3 sm:px-8 py-3.5 sm:py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
+          {/* Brand Logo & Admin Badge - back button removed as requested */}
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <BrandLogo className="w-7 h-7 sm:w-8 sm:h-8" showText={true} />
+            <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#5B3BD1] text-white shadow-xs">
+              Admin
+            </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* Action Buttons: Responsive and never clipped */}
+          <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
             <button
               onClick={fetchProfiles}
-              className="p-2 sm:px-3 sm:py-2 rounded-xl bg-white border border-[#5B3BD1]/20 text-xs font-semibold hover:border-[#5B3BD1] flex items-center gap-1.5 transition-all"
+              className="p-2 sm:px-3 sm:py-2 rounded-xl bg-white border border-[#5B3BD1]/20 text-xs font-semibold hover:border-[#5B3BD1] text-[#0D0B1A] flex items-center gap-1.5 transition-all shadow-xs"
               title="Refresh records"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
@@ -359,15 +352,17 @@ export default function AdminPage() {
 
             <button
               onClick={handleExportCSV}
-              className="px-3 sm:px-4 py-2 rounded-xl bg-[#5B3BD1] text-white text-xs font-semibold hover:bg-[#3A1F8C] flex items-center gap-1.5 transition-all shadow-sm"
+              className="px-2.5 py-2 sm:px-4 sm:py-2 rounded-xl bg-[#5B3BD1] text-white text-xs font-semibold hover:bg-[#3A1F8C] flex items-center gap-1.5 transition-all shadow-sm"
+              title="Export CSV"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Export CSV</span>
+              <span className="hidden sm:inline">Export CSV</span>
             </button>
 
             <button
               onClick={handleLogout}
-              className="p-2 text-xs text-red-600 hover:underline font-semibold"
+              className="px-2 py-1.5 text-xs text-red-600 hover:text-red-700 font-semibold transition-colors"
+              title="Log out of admin"
             >
               Log out
             </button>
@@ -377,43 +372,23 @@ export default function AdminPage() {
 
       {/* Main Admin Content Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-8">
-        {/* KPI Metric Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="p-5 rounded-2xl bg-white border border-white shadow-sm flex flex-col justify-between">
+        {/* KPI Metric Cards - storage engine and security status cards removed as requested */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          <div className="p-5 sm:p-6 rounded-2xl bg-white border border-white shadow-sm flex flex-col justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#4A4568]">
               Total Profiles Stored
             </span>
-            <span className="text-2xl sm:text-3xl font-extrabold text-[#5B3BD1] mt-2">
+            <span className="text-3xl sm:text-4xl font-extrabold text-[#5B3BD1] mt-2">
               {totalCalculations}
             </span>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white border border-white shadow-sm flex flex-col justify-between">
+          <div className="p-5 sm:p-6 rounded-2xl bg-white border border-white shadow-sm flex flex-col justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#4A4568]">
               Master Vibrations (11/22/33)
             </span>
-            <span className="text-2xl sm:text-3xl font-extrabold text-[#3A1F8C] mt-2">
+            <span className="text-3xl sm:text-4xl font-extrabold text-[#3A1F8C] mt-2">
               {masterNumberCount}
-            </span>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-white border border-white shadow-sm flex flex-col justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#4A4568]">
-              Active Storage Engine
-            </span>
-            <span className="text-xs font-bold text-emerald-600 mt-2 flex items-center gap-1">
-              <CheckCircle className="w-3.5 h-3.5" />
-              <span>SQLite / MySQL Synced</span>
-            </span>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-white border border-white shadow-sm flex flex-col justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#4A4568]">
-              Admin Security Status
-            </span>
-            <span className="text-xs font-bold text-[#5B3BD1] mt-2 flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Session Verified</span>
             </span>
           </div>
         </div>
