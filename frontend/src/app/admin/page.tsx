@@ -21,6 +21,7 @@ import {
   CheckCircle,
   Trash2,
   AlertTriangle,
+  LogOut,
 } from "lucide-react";
 
 interface AdminProfile {
@@ -387,42 +388,43 @@ export default function AdminPage() {
   return (
     <main className="min-h-screen w-full bg-[#E7E3FB] text-[#0D0B1A] pb-16">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-[#5B3BD1]/15 px-3 sm:px-8 py-3.5 sm:py-4">
+      <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-[#5B3BD1]/15 px-3 sm:px-8 py-3 sm:py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
-          {/* Brand Logo & Admin Badge - back button removed as requested */}
-          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          {/* Brand Logo & Admin Badge */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
             <BrandLogo className="w-7 h-7 sm:w-8 sm:h-8" showText={true} />
             <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#5B3BD1] text-white shadow-xs">
               Admin
             </span>
           </div>
 
-          {/* Action Buttons: Responsive and never clipped */}
-          <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
+          {/* Action Buttons: Neatly aligned and never clipped */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
             <button
               onClick={fetchProfiles}
-              className="p-2 sm:px-3 sm:py-2 rounded-xl bg-white border border-[#5B3BD1]/20 text-xs font-semibold hover:border-[#5B3BD1] text-[#0D0B1A] flex items-center gap-1.5 transition-all shadow-xs"
+              className="p-2 sm:px-3 sm:py-2 rounded-xl bg-white border border-[#5B3BD1]/20 text-xs font-semibold hover:border-[#5B3BD1] text-[#0D0B1A] flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
               title="Refresh records"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden md:inline">Refresh</span>
             </button>
 
             <button
               onClick={handleExportCSV}
-              className="px-2.5 py-2 sm:px-4 sm:py-2 rounded-xl bg-[#5B3BD1] text-white text-xs font-semibold hover:bg-[#3A1F8C] flex items-center gap-1.5 transition-all shadow-sm"
+              className="p-2 sm:px-3.5 sm:py-2 rounded-xl bg-[#5B3BD1] text-white text-xs font-semibold hover:bg-[#3A1F8C] flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
               title="Export CSV"
             >
               <Download className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Export CSV</span>
+              <span className="hidden md:inline">Export CSV</span>
             </button>
 
             <button
               onClick={handleLogout}
-              className="px-2 py-1.5 text-xs text-red-600 hover:text-red-700 font-semibold transition-colors"
-              title="Log out of admin"
+              className="p-2 sm:p-2.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border border-red-200 transition-all flex items-center justify-center shadow-xs flex-shrink-0 cursor-pointer"
+              title="Log out of admin console"
+              aria-label="Log out of admin console"
             >
-              Log out
+              <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           </div>
         </div>
