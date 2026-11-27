@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import BrandLogo from "@/components/BrandLogo";
@@ -22,6 +22,14 @@ import {
   Trash2,
   AlertTriangle,
   LogOut,
+  Layers,
+  BarChart3,
+  Sliders,
+  UserCheck,
+  Activity,
+  Database,
+  Filter,
+  ArrowRight,
 } from "lucide-react";
 
 interface AdminProfile {
@@ -52,9 +60,13 @@ export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Bottom navbar navigation tabs: profiles | users | analytics | settings
+  const [adminTab, setAdminTab] = useState<"profiles" | "users" | "analytics" | "settings">("profiles");
+
   const [profiles, setProfiles] = useState<AdminProfile[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
+  const [userSearch, setUserSearch] = useState("");
   const [selectedProfile, setSelectedProfile] = useState<AdminProfile | null>(null);
   const [profileToDelete, setProfileToDelete] = useState<AdminProfile | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -138,7 +150,6 @@ export default function AdminPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Default admin passcode: magic3admin (or configurable)
     if (passcode === "magic3admin" || passcode === "admin123") {
       setIsAuthenticated(true);
       sessionStorage.setItem("magic3_admin_auth", "true");
@@ -191,7 +202,7 @@ export default function AdminPage() {
         const nameDateKey = `${m.full_name}-${m.birth_date}`;
         return !deletedMarkers.includes(idKey) && !deletedMarkers.includes(nameDateKey);
       });
-      // Deduplicate by id or full_name + created_at
+      // Deduplicate by full_name + birth_date
       const unique = Array.from(new Map(activeRecords.map((m) => [`${m.full_name}-${m.birth_date}`, m])).values());
       setProfiles(unique);
     } catch (err) {
@@ -202,23 +213,130 @@ export default function AdminPage() {
     }
   };
 
-  const filteredProfiles = profiles.filter((p) => {
-    if (!search.trim()) return true;
+  // Filtered Profiles for Tab 1
+  const filteredProfiles = useMemo(() => {
+    if (!search.trim()) return profiles;
     const q = search.toLowerCase();
-    return (
-      p.full_name.toLowerCase().includes(q) ||
-      (p.email && p.email.toLowerCase().includes(q)) ||
-      (p.birth_city && p.birth_city.toLowerCase().includes(q)) ||
-      p.sun_sign.toLowerCase().includes(q) ||
-      p.moon_sign.toLowerCase().includes(q) ||
-      p.nakshatra.toLowerCase().includes(q) ||
-      p.life_path_number.toString() === q
-    );
-  });
+    return profiles.filter((p) => {
+      return (
+        p.full_name.toLowerCase().includes(q) ||
+        (p.email && p.email.toLowerCase().includes(q)) ||
+        (p.birth_city && p.birth_city.toLowerCase().includes(q)) ||
+        p.sun_sign.toLowerCase().includes(q) ||
+        p.moon_sign.toLowerCase().includes(q) ||
+        p.nakshatra.toLowerCase().includes(q) ||
+        p.life_path_number.toString() === q
+      );
+    });
+  }, [profiles, search]);
 
-  // Calculate metrics
-  const totalCalculations = profiles.length;
-  const masterNumberCount = profiles.filter((p) => p.is_master_number || [11, 22, 33].includes(p.life_path_number)).length;
+  // Derived unique users for Tab 2
+  const uniqueUsers = useMemo(() => {
+    const userMap = new Map<
+      string,
+      {
+        key: string;
+        name: string;
+        email: string;
+        isGuest: boolean;
+        profilesCount: number;
+        lastActive: string;
+        city?: string;
+        latestNumbers?: string;
+        masterCount: number;
+      }
+    >();
+
+    profiles.forEach((p) => {
+      const emailLower = p.email?.trim().toLowerCase();
+      const hasRealEmail = emailLower && !emailLower.includes("guest@magic3numbers.com") && !emailLower.includes("guest");
+      const key = hasRealEmail ? emailLower : `name-${p.full_name.trim().toLowerCase()}`;
+
+      const num1 = p.number_1 || p.life_path_number;
+      const num2 = p.number_2 || p.birthday_number || 1;
+      const num3 = p.number_3 || p.expression_number || 1;
+      const formatted = p.formatted_numbers || `${num1} • ${num2} • ${num3}`;
+      const isMaster = p.is_master_number || [11, 22, 33].includes(num1);
+
+      if (!userMap.has(key)) {
+        userMap.set(key, {
+          key,
+          name: p.full_name,
+          email: hasRealEmail ? p.email! : "Guest Explorer",
+          isGuest: !hasRealEmail,
+          profilesCount: 1,
+          lastActive: p.created_at,
+          city: p.birth_city,
+          latestNumbers: formatted,
+          masterCount: isMaster ? 1 : 0,
+        });
+      } else {
+        const existing = userMap.get(key)!;
+        existing.profilesCount += 1;
+        if (isMaster) existing.masterCount += 1;
+        if (new Date(p.created_at) > new Date(existing.lastActive)) {
+          existing.lastActive = p.created_at;
+          existing.latestNumbers = formatted;
+          if (p.birth_city) existing.city = p.birth_city;
+        }
+      }
+    });
+
+    return Array.from(userMap.values());
+  }, [profiles]);
+
+  const filteredUsers = useMemo(() => {
+    if (!userSearch.trim()) return uniqueUsers;
+    const q = userSearch.toLowerCase();
+    return uniqueUsers.filter(
+      (u) =>
+        u.name.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q) ||
+        (u.city && u.city.toLowerCase().includes(q))
+    );
+  }, [uniqueUsers, userSearch]);
+
+  // Derived Analytics for Tab 3
+  const analyticsData = useMemo(() => {
+    const total = profiles.length;
+    const masterCount = profiles.filter((p) => p.is_master_number || [11, 22, 33].includes(p.life_path_number)).length;
+    const exactTimeCount = profiles.filter((p) => p.birth_time && !p.is_time_unknown).length;
+
+    // Life path counts
+    const lifePathCounts: Record<number, number> = {};
+    profiles.forEach((p) => {
+      const lp = p.life_path_number;
+      lifePathCounts[lp] = (lifePathCounts[lp] || 0) + 1;
+    });
+
+    // Sun sign counts
+    const sunSignCounts: Record<string, number> = {};
+    profiles.forEach((p) => {
+      if (p.sun_sign) {
+        sunSignCounts[p.sun_sign] = (sunSignCounts[p.sun_sign] || 0) + 1;
+      }
+    });
+
+    // Moon sign counts
+    const moonSignCounts: Record<string, number> = {};
+    profiles.forEach((p) => {
+      if (p.moon_sign) {
+        moonSignCounts[p.moon_sign] = (moonSignCounts[p.moon_sign] || 0) + 1;
+      }
+    });
+
+    return {
+      total,
+      masterCount,
+      exactTimeCount,
+      timeAccuracyPct: total > 0 ? Math.round((exactTimeCount / total) * 100) : 0,
+      lifePathCounts,
+      sunSignCounts,
+      moonSignCounts,
+      registeredUsersCount: uniqueUsers.filter((u) => !u.isGuest).length,
+      guestUsersCount: uniqueUsers.filter((u) => u.isGuest).length,
+    };
+  }, [profiles, uniqueUsers]);
 
   // Delete profile record
   const handleDeleteProfile = async (target: AdminProfile) => {
@@ -235,7 +353,7 @@ export default function AdminPage() {
         }
       }
 
-      // Track deleted markers
+      // Track deleted markers in local storage
       try {
         const deletedMarkers: string[] = JSON.parse(localStorage.getItem("magic3_deleted_profiles") || "[]");
         const idKey = String(target.id);
@@ -322,6 +440,12 @@ export default function AdminPage() {
     link.remove();
   };
 
+  // Jump from Users tab to Profiles tab filtered by user
+  const handleInspectUserProfiles = (userName: string) => {
+    setSearch(userName);
+    setAdminTab("profiles");
+  };
+
   // 1. Passcode Gate Screen
   if (!isAuthenticated) {
     return (
@@ -386,9 +510,9 @@ export default function AdminPage() {
 
   // 2. Authenticated Admin Dashboard Screen
   return (
-    <main className="min-h-screen w-full bg-[#E7E3FB] text-[#0D0B1A] pb-16">
+    <div className="min-h-screen w-full bg-[#E7E3FB] text-[#0D0B1A] flex flex-col justify-between">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-[#5B3BD1]/15 px-3 sm:px-8 py-3 sm:py-3.5">
+      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#5B3BD1]/15 px-3 sm:px-8 py-3 sm:py-3.5 shadow-xs">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           {/* Brand Logo & Admin Badge */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
@@ -430,151 +554,603 @@ export default function AdminPage() {
         </div>
       </header>
 
-      {/* Main Admin Content Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-8">
-        {/* KPI Metric Cards - storage engine and security status cards removed as requested */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-          <div className="p-5 sm:p-6 rounded-2xl bg-white border border-white shadow-sm flex flex-col justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#4A4568]">
-              Total Profiles Stored
-            </span>
-            <span className="text-3xl sm:text-4xl font-extrabold text-[#5B3BD1] mt-2">
-              {totalCalculations}
-            </span>
-          </div>
+      {/* Main Content Area (padded bottom to prevent overlap with webapp dock) */}
+      <main className="max-w-7xl mx-auto w-full px-4 sm:px-8 pt-6 sm:pt-8 pb-28 sm:pb-32 flex-1">
+        {/* =========================================================================
+            TAB 1: PROFILES / CALCULATIONS RECORDS
+            ========================================================================= */}
+        {adminTab === "profiles" && (
+          <div className="animate-fade-in space-y-6">
+            {/* Quick KPI Row */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+              <div className="p-4 sm:p-5 rounded-2xl bg-white border border-white shadow-sm flex flex-col justify-between">
+                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-[#4A4568]">
+                  Stored Profiles
+                </span>
+                <span className="text-2xl sm:text-3xl font-extrabold text-[#5B3BD1] mt-1">
+                  {profiles.length}
+                </span>
+              </div>
+              <div className="p-4 sm:p-5 rounded-2xl bg-white border border-white shadow-sm flex flex-col justify-between">
+                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-[#4A4568]">
+                  Master Vibrations
+                </span>
+                <span className="text-2xl sm:text-3xl font-extrabold text-[#3A1F8C] mt-1">
+                  {analyticsData.masterCount}
+                </span>
+              </div>
+              <div className="p-4 sm:p-5 rounded-2xl bg-white border border-white shadow-sm flex flex-col justify-between">
+                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-[#4A4568]">
+                  Unique Users
+                </span>
+                <span className="text-2xl sm:text-3xl font-extrabold text-[#5B3BD1] mt-1">
+                  {uniqueUsers.length}
+                </span>
+              </div>
+              <div className="p-4 sm:p-5 rounded-2xl bg-white border border-white shadow-sm flex flex-col justify-between">
+                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-[#4A4568]">
+                  Filtered Count
+                </span>
+                <span className="text-2xl sm:text-3xl font-extrabold text-emerald-600 mt-1">
+                  {filteredProfiles.length}
+                </span>
+              </div>
+            </div>
 
-          <div className="p-5 sm:p-6 rounded-2xl bg-white border border-white shadow-sm flex flex-col justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#4A4568]">
-              Master Vibrations (11/22/33)
-            </span>
-            <span className="text-3xl sm:text-4xl font-extrabold text-[#3A1F8C] mt-2">
-              {masterNumberCount}
-            </span>
-          </div>
-        </div>
+            {/* Search Bar & Counter */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              <div className="relative flex-1 max-w-md">
+                <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Filter by name, email, city, sign, or number..."
+                  className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white border border-[#5B3BD1]/20 text-xs sm:text-sm text-[#0D0B1A] focus:outline-none focus:border-[#5B3BD1] shadow-xs"
+                />
+                {search && (
+                  <button
+                    onClick={() => setSearch("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs font-bold"
+                  >
+                    &times;
+                  </button>
+                )}
+              </div>
 
-        {/* Search Bar */}
-        <div className="mb-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-          <div className="relative flex-1 max-w-md">
-            <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Filter by name, email, city, sign, or number..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#5B3BD1]/20 text-xs sm:text-sm text-[#0D0B1A] focus:outline-none focus:border-[#5B3BD1]"
-            />
-          </div>
+              <div className="flex items-center justify-between sm:justify-end gap-3 text-xs text-[#4A4568]">
+                <span>Showing {filteredProfiles.length} of {profiles.length} records</span>
+                {search && (
+                  <button
+                    onClick={() => setSearch("")}
+                    className="text-[#5B3BD1] font-semibold hover:underline"
+                  >
+                    Reset Filter
+                  </button>
+                )}
+              </div>
+            </div>
 
-          <span className="text-xs text-[#4A4568] self-center">
-            Showing {filteredProfiles.length} of {profiles.length} records
-          </span>
-        </div>
-
-        {/* Profiles Table */}
-        <div className="bg-white rounded-3xl border border-white shadow-md overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-[#E7E3FB] text-[#0D0B1A] font-bold border-b border-[#5B3BD1]/15 uppercase tracking-wider text-[11px]">
-                <tr>
-                  <th className="p-4">User / Name</th>
-                  <th className="p-4">Birth Parameters</th>
-                  <th className="p-4 text-center">The 3 Numbers</th>
-                  <th className="p-4">Western Sun</th>
-                  <th className="p-4">Vedic Moon &amp; Asterism</th>
-                  <th className="p-4">Date Recorded</th>
-                  <th className="p-4 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#5B3BD1]/10">
-                {filteredProfiles.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="p-8 text-center text-gray-500">
-                      No records match the current filter.
-                    </td>
-                  </tr>
-                ) : (
-                  filteredProfiles.map((p) => {
-                    const num1 = p.number_1 || p.life_path_number;
-                    const num2 = p.number_2 || p.birthday_number || 1;
-                    const num3 = p.number_3 || p.expression_number || 1;
-
-                    return (
-                      <tr key={p.id} className="hover:bg-[#E7E3FB]/40 transition-colors">
-                        <td className="p-4 font-semibold text-[#0D0B1A]">
-                          <div>{p.full_name}</div>
-                          {p.email && <div className="text-[11px] text-gray-500 font-normal">{p.email}</div>}
-                        </td>
-                        <td className="p-4 text-[#4A4568]">
-                          <div>{p.birth_date} {p.birth_time ? `@ ${p.birth_time}` : ""}</div>
-                          <div className="text-[11px] text-gray-500">{p.birth_city || "-"}</div>
-                        </td>
-                        <td className="p-4 text-center">
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#5B3BD1]/10 text-[#5B3BD1] font-mono font-bold text-xs border border-[#5B3BD1]/20 shadow-xs">
-                            <span
-                              className="w-6 h-6 rounded-lg bg-[#5B3BD1] text-white flex items-center justify-center text-xs font-extrabold shadow-xs"
-                              title="1st Number: Life Path"
-                            >
-                              {num1}
-                            </span>
-                            <span className="text-gray-400">•</span>
-                            <span
-                              className="w-6 h-6 rounded-lg bg-[#3A1F8C] text-white flex items-center justify-center text-xs font-extrabold shadow-xs"
-                              title="2nd Number: Birthday"
-                            >
-                              {num2}
-                            </span>
-                            <span className="text-gray-400">•</span>
-                            <span
-                              className="w-6 h-6 rounded-lg bg-[#5B3BD1] text-white flex items-center justify-center text-xs font-extrabold shadow-xs"
-                              title="3rd Number: Expression"
-                            >
-                              {num3}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="p-4 font-bold text-[#5B3BD1]">{p.sun_sign}</td>
-                        <td className="p-4">
-                          <span className="font-semibold text-[#0D0B1A]">{p.moon_sign}</span>
-                          <span className="block text-[11px] text-gray-500">
-                            {p.nakshatra} (Pada {p.pada || 1})
-                          </span>
-                        </td>
-                        <td className="p-4 text-gray-500 font-mono text-[11px]">
-                          {new Date(p.created_at).toLocaleDateString()}
-                        </td>
-                        <td className="p-4 text-right">
-                          <div className="inline-flex items-center gap-1.5 justify-end">
-                            <button
-                              onClick={() => setSelectedProfile(p)}
-                              className="px-2.5 py-1.5 rounded-lg bg-[#E7E3FB] text-[#5B3BD1] hover:bg-[#5B3BD1] hover:text-white transition-colors text-xs font-semibold inline-flex items-center gap-1"
-                              title="Inspect parameters"
-                            >
-                              <Eye className="w-3.5 h-3.5" />
-                              <span className="hidden sm:inline">Inspect</span>
-                            </button>
-                            <button
-                              onClick={() => setProfileToDelete(p)}
-                              className="px-2.5 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-colors text-xs font-semibold inline-flex items-center gap-1"
-                              title="Delete profile"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                              <span className="hidden sm:inline">Delete</span>
-                            </button>
+            {/* Profiles Table */}
+            <div className="bg-white rounded-3xl border border-white shadow-md overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-[#E7E3FB] text-[#0D0B1A] font-bold border-b border-[#5B3BD1]/15 uppercase tracking-wider text-[11px]">
+                    <tr>
+                      <th className="p-4">User / Name</th>
+                      <th className="p-4">Birth Parameters</th>
+                      <th className="p-4 text-center">The 3 Numbers</th>
+                      <th className="p-4">Western Sun</th>
+                      <th className="p-4">Vedic Moon &amp; Asterism</th>
+                      <th className="p-4">Date Recorded</th>
+                      <th className="p-4 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#5B3BD1]/10">
+                    {filteredProfiles.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="p-10 text-center text-gray-500">
+                          <div className="flex flex-col items-center justify-center gap-2">
+                            <Layers className="w-8 h-8 text-gray-400" />
+                            <p className="font-semibold text-sm">No records match the current filter.</p>
+                            <p className="text-xs text-gray-400">Try searching for a different name, email, or zodiac sign.</p>
                           </div>
                         </td>
                       </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
+                    ) : (
+                      filteredProfiles.map((p) => {
+                        const num1 = p.number_1 || p.life_path_number;
+                        const num2 = p.number_2 || p.birthday_number || 1;
+                        const num3 = p.number_3 || p.expression_number || 1;
+
+                        return (
+                          <tr key={p.id} className="hover:bg-[#E7E3FB]/40 transition-colors">
+                            <td className="p-4 font-semibold text-[#0D0B1A]">
+                              <div className="text-sm font-bold">{p.full_name}</div>
+                              {p.email && <div className="text-[11px] text-gray-500 font-normal">{p.email}</div>}
+                            </td>
+                            <td className="p-4 text-[#4A4568]">
+                              <div>{p.birth_date} {p.birth_time ? `@ ${p.birth_time}` : ""}</div>
+                              <div className="text-[11px] text-gray-500">{p.birth_city || "-"}</div>
+                            </td>
+                            <td className="p-4 text-center">
+                              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#5B3BD1]/10 text-[#5B3BD1] font-mono font-bold text-xs border border-[#5B3BD1]/20 shadow-xs">
+                                <span
+                                  className="w-6 h-6 rounded-lg bg-[#5B3BD1] text-white flex items-center justify-center text-xs font-extrabold shadow-xs"
+                                  title="1st Number: Life Path"
+                                >
+                                  {num1}
+                                </span>
+                                <span className="text-gray-400">•</span>
+                                <span
+                                  className="w-6 h-6 rounded-lg bg-[#3A1F8C] text-white flex items-center justify-center text-xs font-extrabold shadow-xs"
+                                  title="2nd Number: Birthday"
+                                >
+                                  {num2}
+                                </span>
+                                <span className="text-gray-400">•</span>
+                                <span
+                                  className="w-6 h-6 rounded-lg bg-[#5B3BD1] text-white flex items-center justify-center text-xs font-extrabold shadow-xs"
+                                  title="3rd Number: Expression"
+                                >
+                                  {num3}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="p-4 font-bold text-[#5B3BD1]">{p.sun_sign}</td>
+                            <td className="p-4">
+                              <span className="font-semibold text-[#0D0B1A]">{p.moon_sign}</span>
+                              <span className="block text-[11px] text-gray-500">
+                                {p.nakshatra} (Pada {p.pada || 1})
+                              </span>
+                            </td>
+                            <td className="p-4 text-gray-500 font-mono text-[11px]">
+                              {new Date(p.created_at).toLocaleDateString()}
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="inline-flex items-center gap-1.5 justify-end">
+                                <button
+                                  onClick={() => setSelectedProfile(p)}
+                                  className="px-2.5 py-1.5 rounded-lg bg-[#E7E3FB] text-[#5B3BD1] hover:bg-[#5B3BD1] hover:text-white transition-colors text-xs font-semibold inline-flex items-center gap-1"
+                                  title="Inspect parameters"
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
+                                  <span className="hidden sm:inline">Inspect</span>
+                                </button>
+                                <button
+                                  onClick={() => setProfileToDelete(p)}
+                                  className="px-2.5 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-colors text-xs font-semibold inline-flex items-center gap-1"
+                                  title="Delete profile"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                  <span className="hidden sm:inline">Delete</span>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* =========================================================================
+            TAB 2: USERS / MEMBER DIRECTORY
+            ========================================================================= */}
+        {adminTab === "users" && (
+          <div className="animate-fade-in space-y-6">
+            {/* Header description */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-xl font-bold text-[#0D0B1A] tracking-tight">Customer &amp; Member Directory</h3>
+                <p className="text-xs sm:text-sm text-[#4A4568]">
+                  Aggregated directory of unique member accounts and guest explorers who calculated blueprints.
+                </p>
+              </div>
+
+              {/* User search bar */}
+              <div className="relative w-full sm:w-72">
+                <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={userSearch}
+                  onChange={(e) => setUserSearch(e.target.value)}
+                  placeholder="Search user accounts..."
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#5B3BD1]/20 text-xs sm:text-sm text-[#0D0B1A] focus:outline-none focus:border-[#5B3BD1] shadow-xs"
+                />
+              </div>
+            </div>
+
+            {/* User Breakdown Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="p-5 rounded-2xl bg-white border border-white shadow-sm flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[#4A4568] block">
+                    Total Unique Accounts
+                  </span>
+                  <span className="text-3xl font-extrabold text-[#5B3BD1] mt-1 block">
+                    {uniqueUsers.length}
+                  </span>
+                </div>
+                <div className="w-12 h-12 rounded-2xl bg-[#5B3BD1]/10 text-[#5B3BD1] flex items-center justify-center">
+                  <Users className="w-6 h-6" />
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-white border border-white shadow-sm flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[#4A4568] block">
+                    Registered Members
+                  </span>
+                  <span className="text-3xl font-extrabold text-emerald-600 mt-1 block">
+                    {analyticsData.registeredUsersCount}
+                  </span>
+                </div>
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <UserCheck className="w-6 h-6" />
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-white border border-white shadow-sm flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[#4A4568] block">
+                    Guest Explorers
+                  </span>
+                  <span className="text-3xl font-extrabold text-[#3A1F8C] mt-1 block">
+                    {analyticsData.guestUsersCount}
+                  </span>
+                </div>
+                <div className="w-12 h-12 rounded-2xl bg-[#3A1F8C]/10 text-[#3A1F8C] flex items-center justify-center">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+              </div>
+            </div>
+
+            {/* Users Grid / Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredUsers.length === 0 ? (
+                <div className="col-span-full p-12 text-center bg-white rounded-3xl border border-white shadow-sm text-gray-500">
+                  <UserCheck className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                  <p className="font-semibold text-sm">No user accounts found matching your query.</p>
+                </div>
+              ) : (
+                filteredUsers.map((u) => (
+                  <div
+                    key={u.key}
+                    className="p-5 rounded-3xl bg-white border border-[#5B3BD1]/15 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                  >
+                    <div>
+                      {/* Top Header of User Card */}
+                      <div className="flex items-center justify-between gap-2 mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#5B3BD1] to-[#3A1F8C] text-white font-bold flex items-center justify-center text-sm shadow-xs">
+                            {u.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-sm text-[#0D0B1A] leading-tight">{u.name}</h4>
+                            <p className="text-[11px] text-gray-500 truncate max-w-[160px]">{u.email}</p>
+                          </div>
+                        </div>
+
+                        <span
+                          className={`text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full ${
+                            u.isGuest
+                              ? "bg-purple-100 text-[#5B3BD1]"
+                              : "bg-emerald-100 text-emerald-700"
+                          }`}
+                        >
+                          {u.isGuest ? "Guest" : "Member"}
+                        </span>
+                      </div>
+
+                      {/* User Metadata */}
+                      <div className="p-3 rounded-2xl bg-[#E7E3FB]/50 space-y-1.5 text-xs text-[#4A4568] mb-4">
+                        <div className="flex items-center justify-between">
+                          <span>Calculations:</span>
+                          <span className="font-bold text-[#0D0B1A]">{u.profilesCount} blueprint{u.profilesCount > 1 ? "s" : ""}</span>
+                        </div>
+                        {u.city && (
+                          <div className="flex items-center justify-between">
+                            <span>Birth City:</span>
+                            <span className="font-medium text-[#0D0B1A] truncate max-w-[130px]">{u.city}</span>
+                          </div>
+                        )}
+                        <div className="flex items-center justify-between">
+                          <span>Sacred Numbers:</span>
+                          <span className="font-mono font-bold text-[#5B3BD1]">{u.latestNumbers || "-"}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-[11px] text-gray-500 pt-1 border-t border-[#5B3BD1]/10">
+                          <span>Last Active:</span>
+                          <span>{new Date(u.lastActive).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Button: View user records in Tab 1 */}
+                    <button
+                      onClick={() => handleInspectUserProfiles(u.name)}
+                      className="w-full py-2.5 rounded-xl bg-[#5B3BD1]/10 hover:bg-[#5B3BD1] text-[#5B3BD1] hover:text-white transition-all text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <span>View Calculations ({u.profilesCount})</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB 3: ANALYTICS / STATS
+            ========================================================================= */}
+        {adminTab === "analytics" && (
+          <div className="animate-fade-in space-y-6">
+            <div>
+              <h3 className="text-xl font-bold text-[#0D0B1A] tracking-tight">Calculation Telemetry &amp; Insights</h3>
+              <p className="text-xs sm:text-sm text-[#4A4568]">
+                Real-time astronomical distributions and numerological frequency across all customer calculations.
+              </p>
+            </div>
+
+            {/* KPI Summary Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="p-5 sm:p-6 rounded-3xl bg-white border border-white shadow-sm">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#4A4568] block">
+                  Total Profiles
+                </span>
+                <span className="text-3xl sm:text-4xl font-extrabold text-[#5B3BD1] mt-2 block">
+                  {analyticsData.total}
+                </span>
+                <span className="text-[11px] text-gray-500 mt-1 block">Deterministic calculations</span>
+              </div>
+
+              <div className="p-5 sm:p-6 rounded-3xl bg-white border border-white shadow-sm">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#4A4568] block">
+                  Master Vibrations
+                </span>
+                <span className="text-3xl sm:text-4xl font-extrabold text-[#3A1F8C] mt-2 block">
+                  {analyticsData.masterCount}
+                </span>
+                <span className="text-[11px] text-gray-500 mt-1 block">
+                  {analyticsData.total > 0 ? `${Math.round((analyticsData.masterCount / analyticsData.total) * 100)}% of total profiles` : "0%"}
+                </span>
+              </div>
+
+              <div className="p-5 sm:p-6 rounded-3xl bg-white border border-white shadow-sm">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#4A4568] block">
+                  Exact Time Coverage
+                </span>
+                <span className="text-3xl sm:text-4xl font-extrabold text-emerald-600 mt-2 block">
+                  {analyticsData.timeAccuracyPct}%
+                </span>
+                <span className="text-[11px] text-gray-500 mt-1 block">
+                  {analyticsData.exactTimeCount} with precise birth time
+                </span>
+              </div>
+
+              <div className="p-5 sm:p-6 rounded-3xl bg-white border border-white shadow-sm">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#4A4568] block">
+                  Member Conversion
+                </span>
+                <span className="text-3xl sm:text-4xl font-extrabold text-[#5B3BD1] mt-2 block">
+                  {uniqueUsers.length > 0
+                    ? `${Math.round((analyticsData.registeredUsersCount / uniqueUsers.length) * 100)}%`
+                    : "0%"}
+                </span>
+                <span className="text-[11px] text-gray-500 mt-1 block">
+                  {analyticsData.registeredUsersCount} registered accounts
+                </span>
+              </div>
+            </div>
+
+            {/* Life Path Number Distribution */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-white shadow-md">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h4 className="font-bold text-[#0D0B1A] text-base">Life Path Number Distribution</h4>
+                  <p className="text-xs text-[#4A4568]">Frequency of root vibration numbers and master numbers (11/22/33)</p>
+                </div>
+                <span className="text-xs font-bold text-[#5B3BD1] bg-[#5B3BD1]/10 px-3 py-1 rounded-full">
+                  Pythagorean Matrix
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33].map((num) => {
+                  const count = analyticsData.lifePathCounts[num] || 0;
+                  const isMaster = [11, 22, 33].includes(num);
+                  const pct = analyticsData.total > 0 ? Math.round((count / analyticsData.total) * 100) : 0;
+
+                  return (
+                    <div
+                      key={num}
+                      className={`p-3.5 rounded-2xl border text-center transition-all ${
+                        isMaster
+                          ? "bg-gradient-to-b from-[#3A1F8C]/10 to-[#5B3BD1]/10 border-[#3A1F8C]/30"
+                          : "bg-[#E7E3FB]/40 border-[#5B3BD1]/15"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between text-[10px] text-gray-500 mb-1">
+                        <span className="font-semibold">{isMaster ? "MASTER" : "NUMBER"}</span>
+                        <span>{pct}%</span>
+                      </div>
+                      <div className={`text-2xl font-black ${isMaster ? "text-[#3A1F8C]" : "text-[#5B3BD1]"}`}>
+                        {num}
+                      </div>
+                      <div className="text-[11px] font-bold text-[#0D0B1A] mt-1">
+                        {count} profile{count !== 1 ? "s" : ""}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Western Sun Signs & Vedic Moon Placements */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Western Sun Signs */}
+              <div className="p-6 rounded-3xl bg-white border border-white shadow-md">
+                <h4 className="font-bold text-[#0D0B1A] text-base mb-1">Western Sun Sign Distribution</h4>
+                <p className="text-xs text-[#4A4568] mb-4">Tropical zodiac sun positions calculated for users</p>
+
+                <div className="space-y-2.5">
+                  {Object.entries(analyticsData.sunSignCounts).length === 0 ? (
+                    <p className="text-xs text-gray-400">No zodiac records calculated yet.</p>
+                  ) : (
+                    Object.entries(analyticsData.sunSignCounts)
+                      .sort((a, b) => b[1] - a[1])
+                      .slice(0, 6)
+                      .map(([sign, count]) => {
+                        const pct = analyticsData.total > 0 ? Math.round((count / analyticsData.total) * 100) : 0;
+                        return (
+                          <div key={sign} className="space-y-1">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="font-bold text-[#0D0B1A]">{sign}</span>
+                              <span className="text-gray-500 font-semibold">{count} ({pct}%)</span>
+                            </div>
+                            <div className="w-full h-2 rounded-full bg-gray-100 overflow-hidden">
+                              <div
+                                className="h-full bg-[#5B3BD1] rounded-full transition-all"
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })
+                  )}
+                </div>
+              </div>
+
+              {/* Vedic Moon Placements */}
+              <div className="p-6 rounded-3xl bg-white border border-white shadow-md">
+                <h4 className="font-bold text-[#0D0B1A] text-base mb-1">Vedic Sidereal Moon Signs</h4>
+                <p className="text-xs text-[#4A4568] mb-4">Lahiri Ayanamsa lunar rasi alignments recorded</p>
+
+                <div className="space-y-2.5">
+                  {Object.entries(analyticsData.moonSignCounts).length === 0 ? (
+                    <p className="text-xs text-gray-400">No lunar records calculated yet.</p>
+                  ) : (
+                    Object.entries(analyticsData.moonSignCounts)
+                      .sort((a, b) => b[1] - a[1])
+                      .slice(0, 6)
+                      .map(([sign, count]) => {
+                        const pct = analyticsData.total > 0 ? Math.round((count / analyticsData.total) * 100) : 0;
+                        return (
+                          <div key={sign} className="space-y-1">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="font-bold text-[#0D0B1A]">{sign}</span>
+                              <span className="text-gray-500 font-semibold">{count} ({pct}%)</span>
+                            </div>
+                            <div className="w-full h-2 rounded-full bg-gray-100 overflow-hidden">
+                              <div
+                                className="h-full bg-[#3A1F8C] rounded-full transition-all"
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB 4: SETTINGS / ENGINE & EXPORT
+            ========================================================================= */}
+        {adminTab === "settings" && (
+          <div className="animate-fade-in space-y-6">
+            <div>
+              <h3 className="text-xl font-bold text-[#0D0B1A] tracking-tight">System &amp; Console Settings</h3>
+              <p className="text-xs sm:text-sm text-[#4A4568]">
+                Administrative configuration, database export, ephemeris status, and active session controls.
+              </p>
+            </div>
+
+            {/* Storage & Engine Status */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-white shadow-md space-y-4">
+              <h4 className="font-bold text-[#0D0B1A] text-base">Astronomical Calculation Engine Status</h4>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 rounded-2xl bg-[#E7E3FB]/50 border border-[#5B3BD1]/15 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-500">Planetary Ephemeris</span>
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">ACTIVE</span>
+                  </div>
+                  <p className="font-bold text-sm text-[#0D0B1A]">VSOP87 &amp; Swiss Ephemeris</p>
+                  <p className="text-[11px] text-gray-500">High precision tropical coordinates + Sidereal Lahiri Ayanamsa</p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-[#E7E3FB]/50 border border-[#5B3BD1]/15 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-500">Numerology Engine</span>
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">ACTIVE</span>
+                  </div>
+                  <p className="font-bold text-sm text-[#0D0B1A]">Pythagorean Letter Matrix</p>
+                  <p className="text-[11px] text-gray-500">Master vibration preservation (11, 22, 33) &amp; Expression reduction</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Data Management & Export */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-white shadow-md space-y-4">
+              <h4 className="font-bold text-[#0D0B1A] text-base">Data Management &amp; Export</h4>
+              <p className="text-xs text-[#4A4568]">
+                Export calculation records, astronomical parameters, and customer profiles into standard formats.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={handleExportCSV}
+                  className="px-5 py-3 rounded-2xl bg-[#5B3BD1] hover:bg-[#3A1F8C] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-sm cursor-pointer"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download Complete CSV Export ({profiles.length} Records)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={fetchProfiles}
+                  className="px-5 py-3 rounded-2xl bg-white border border-[#5B3BD1]/20 hover:border-[#5B3BD1] text-[#0D0B1A] font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer"
+                >
+                  <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+                  <span>Synchronize Remote Records</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Session Management */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-white shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h4 className="font-bold text-[#0D0B1A] text-base">Administrative Session</h4>
+                <p className="text-xs text-[#4A4568] mt-0.5">
+                  Current authenticated operator session. End session to lock console.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="px-5 py-2.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Log Out of Admin Console</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Toast Feedback */}
         {toastMessage && (
-          <div className="fixed bottom-6 right-6 z-50 p-4 rounded-2xl bg-emerald-700 text-white shadow-xl flex items-center gap-2 text-xs sm:text-sm font-semibold animate-fade-in">
+          <div className="fixed bottom-24 right-6 z-50 p-4 rounded-2xl bg-emerald-700 text-white shadow-xl flex items-center gap-2 text-xs sm:text-sm font-semibold animate-fade-in">
             <CheckCircle className="w-4 h-4 text-emerald-300" />
             <span>{toastMessage}</span>
           </div>
@@ -707,7 +1283,66 @@ export default function AdminPage() {
             </div>
           </div>
         )}
-      </div>
-    </main>
+      </main>
+
+      {/* =========================================================================
+          BOTTOM WEBAPP NAVBAR DOCK: Profiles, Users, Analytics, Settings
+          ========================================================================= */}
+      <nav
+        role="navigation"
+        aria-label="Admin console navigation"
+        className="fixed bottom-0 left-0 right-0 z-40 bg-[#0D0B1A]/95 backdrop-blur-xl border-t border-[#3A1F8C]/40 text-white shadow-2xl px-4 py-2 sm:py-2.5"
+      >
+        <div className="max-w-md mx-auto grid grid-cols-4 gap-1">
+          <button
+            onClick={() => setAdminTab("profiles")}
+            className={`flex flex-col items-center justify-center py-1.5 px-2 rounded-2xl transition-all cursor-pointer select-none focus:outline-none ${
+              adminTab === "profiles"
+                ? "bg-[#5B3BD1] text-white shadow-md shadow-[#5B3BD1]/40 font-bold"
+                : "text-[#CFC6F6]/70 hover:text-white hover:bg-white/5 font-medium"
+            }`}
+          >
+            <Layers className="w-5 h-5 mb-0.5" />
+            <span className="text-[11px] tracking-tight">Profiles</span>
+          </button>
+
+          <button
+            onClick={() => setAdminTab("users")}
+            className={`flex flex-col items-center justify-center py-1.5 px-2 rounded-2xl transition-all cursor-pointer select-none focus:outline-none ${
+              adminTab === "users"
+                ? "bg-[#5B3BD1] text-white shadow-md shadow-[#5B3BD1]/40 font-bold"
+                : "text-[#CFC6F6]/70 hover:text-white hover:bg-white/5 font-medium"
+            }`}
+          >
+            <Users className="w-5 h-5 mb-0.5" />
+            <span className="text-[11px] tracking-tight">Users</span>
+          </button>
+
+          <button
+            onClick={() => setAdminTab("analytics")}
+            className={`flex flex-col items-center justify-center py-1.5 px-2 rounded-2xl transition-all cursor-pointer select-none focus:outline-none ${
+              adminTab === "analytics"
+                ? "bg-[#5B3BD1] text-white shadow-md shadow-[#5B3BD1]/40 font-bold"
+                : "text-[#CFC6F6]/70 hover:text-white hover:bg-white/5 font-medium"
+            }`}
+          >
+            <BarChart3 className="w-5 h-5 mb-0.5" />
+            <span className="text-[11px] tracking-tight">Analytics</span>
+          </button>
+
+          <button
+            onClick={() => setAdminTab("settings")}
+            className={`flex flex-col items-center justify-center py-1.5 px-2 rounded-2xl transition-all cursor-pointer select-none focus:outline-none ${
+              adminTab === "settings"
+                ? "bg-[#5B3BD1] text-white shadow-md shadow-[#5B3BD1]/40 font-bold"
+                : "text-[#CFC6F6]/70 hover:text-white hover:bg-white/5 font-medium"
+            }`}
+          >
+            <Sliders className="w-5 h-5 mb-0.5" />
+            <span className="text-[11px] tracking-tight">Settings</span>
+          </button>
+        </div>
+      </nav>
+    </div>
   );
 }
