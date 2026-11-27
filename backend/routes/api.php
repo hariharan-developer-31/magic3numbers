@@ -15,5 +15,6 @@ Route::prefix('v1')->group(function () {
     Route::prefix('admin')->group(function () {
         Route::get('/stats', [AstrologyController::class, 'adminStats']);
         Route::get('/profiles', [AstrologyController::class, 'adminProfiles']);
+        Route::delete('/profiles/{id}', [AstrologyController::class, 'adminDeleteProfile']);
     });
 });

@@ -6,19 +6,27 @@ import { Sparkles } from "lucide-react";
 export default function CalculationLoader({
   isOpen,
   fullName,
+  title,
+  subtitle,
+  steps: customSteps,
 }: {
   isOpen: boolean;
-  fullName: string;
+  fullName?: string;
+  title?: string;
+  subtitle?: string;
+  steps?: string[];
 }) {
   const [stepIndex, setStepIndex] = useState(0);
 
-  const steps = [
+  const defaultSteps = [
     "Resolving geographical coordinates & UTC historical timezone...",
     "Calculating Lahiri Sidereal ephemeris & 27 Nakshatras...",
     "Aligning Tropical Western geometry & planetary aspects...",
     "Deriving Pythagorean Life Path & master vibrational frequencies...",
     "Harmonizing your 3 Sacred Numbers...",
   ];
+
+  const steps = customSteps && customSteps.length > 0 ? customSteps : defaultSteps;
 
   useEffect(() => {
     if (!isOpen) {
@@ -31,7 +39,7 @@ export default function CalculationLoader({
     }, 380);
 
     return () => clearInterval(interval);
-  }, [isOpen]);
+  }, [isOpen, steps.length]);
 
   if (!isOpen) return null;
 
@@ -65,10 +73,10 @@ export default function CalculationLoader({
 
         {/* Dynamic Calculation Title */}
         <span className="editorial-caption text-[#CFC6F6] block mb-2">
-          Generating Blueprint for {fullName || "You"}
+          {subtitle || (fullName ? `Generating Blueprint for ${fullName}` : "Initializing Portal")}
         </span>
         <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white mb-4">
-          Unveiling Your 3 Numbers
+          {title || "Unveiling Your 3 Numbers"}
         </h3>
 
         {/* Step-by-step calculation status indicator */}

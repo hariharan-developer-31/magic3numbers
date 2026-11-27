@@ -19,6 +19,8 @@ import {
   Clock,
   MapPin,
   CheckCircle,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 
 interface AdminProfile {
@@ -53,6 +55,9 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedProfile, setSelectedProfile] = useState<AdminProfile | null>(null);
+  const [profileToDelete, setProfileToDelete] = useState<AdminProfile | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Default demo records if database is empty initially
   const SEED_PROFILES: AdminProfile[] = [
@@ -178,8 +183,15 @@ export default function AdminPage() {
       }
 
       const merged = [...fetched, ...localList, ...SEED_PROFILES];
+      // Filter out records deleted by admin
+      const deletedMarkers: string[] = JSON.parse(localStorage.getItem("magic3_deleted_profiles") || "[]");
+      const activeRecords = merged.filter((m) => {
+        const idKey = String(m.id);
+        const nameDateKey = `${m.full_name}-${m.birth_date}`;
+        return !deletedMarkers.includes(idKey) && !deletedMarkers.includes(nameDateKey);
+      });
       // Deduplicate by id or full_name + created_at
-      const unique = Array.from(new Map(merged.map((m) => [`${m.full_name}-${m.birth_date}`, m])).values());
+      const unique = Array.from(new Map(activeRecords.map((m) => [`${m.full_name}-${m.birth_date}`, m])).values());
       setProfiles(unique);
     } catch (err) {
       console.error("Error fetching profiles:", err);
@@ -206,6 +218,52 @@ export default function AdminPage() {
   // Calculate metrics
   const totalCalculations = profiles.length;
   const masterNumberCount = profiles.filter((p) => p.is_master_number || [11, 22, 33].includes(p.life_path_number)).length;
+
+  // Delete profile record
+  const handleDeleteProfile = async (target: AdminProfile) => {
+    setIsDeleting(true);
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      if (apiUrl && typeof target.id === "number") {
+        try {
+          await fetch(`${apiUrl}/api/v1/admin/profiles/${target.id}`, {
+            method: "DELETE",
+          });
+        } catch (apiErr) {
+          console.warn("Backend API delete warning:", apiErr);
+        }
+      }
+
+      // Track deleted markers
+      try {
+        const deletedMarkers: string[] = JSON.parse(localStorage.getItem("magic3_deleted_profiles") || "[]");
+        const idKey = String(target.id);
+        const nameDateKey = `${target.full_name}-${target.birth_date}`;
+        localStorage.setItem("magic3_deleted_profiles", JSON.stringify([...deletedMarkers, idKey, nameDateKey]));
+
+        const localStored = localStorage.getItem("magic3_admin_records");
+        if (localStored) {
+          const parsed = JSON.parse(localStored);
+          const filtered = parsed.filter(
+            (p: any) => String(p.id) !== idKey && `${p.full_name}-${p.birth_date}` !== nameDateKey
+          );
+          localStorage.setItem("magic3_admin_records", JSON.stringify(filtered));
+        }
+      } catch (e) {}
+
+      setProfiles((prev) =>
+        prev.filter((p) => String(p.id) !== String(target.id) && `${p.full_name}-${p.birth_date}` !== `${target.full_name}-${target.birth_date}`)
+      );
+
+      setToastMessage(`Profile record for "${target.full_name}" deleted successfully.`);
+      setTimeout(() => setToastMessage(null), 4000);
+    } catch (err) {
+      console.error("Error deleting profile:", err);
+    } finally {
+      setIsDeleting(false);
+      setProfileToDelete(null);
+    }
+  };
 
   const handleExportCSV = () => {
     const headers = [
@@ -484,13 +542,24 @@ export default function AdminPage() {
                           {new Date(p.created_at).toLocaleDateString()}
                         </td>
                         <td className="p-4 text-right">
-                          <button
-                            onClick={() => setSelectedProfile(p)}
-                            className="px-3 py-1.5 rounded-lg bg-[#E7E3FB] text-[#5B3BD1] hover:bg-[#5B3BD1] hover:text-white transition-colors text-xs font-semibold inline-flex items-center gap-1"
-                          >
-                            <Eye className="w-3.5 h-3.5" />
-                            <span>Inspect</span>
-                          </button>
+                          <div className="inline-flex items-center gap-1.5 justify-end">
+                            <button
+                              onClick={() => setSelectedProfile(p)}
+                              className="px-2.5 py-1.5 rounded-lg bg-[#E7E3FB] text-[#5B3BD1] hover:bg-[#5B3BD1] hover:text-white transition-colors text-xs font-semibold inline-flex items-center gap-1"
+                              title="Inspect parameters"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                              <span className="hidden sm:inline">Inspect</span>
+                            </button>
+                            <button
+                              onClick={() => setProfileToDelete(p)}
+                              className="px-2.5 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-colors text-xs font-semibold inline-flex items-center gap-1"
+                              title="Delete profile"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                              <span className="hidden sm:inline">Delete</span>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -500,6 +569,47 @@ export default function AdminPage() {
             </table>
           </div>
         </div>
+
+        {/* Toast Feedback */}
+        {toastMessage && (
+          <div className="fixed bottom-6 right-6 z-50 p-4 rounded-2xl bg-emerald-700 text-white shadow-xl flex items-center gap-2 text-xs sm:text-sm font-semibold animate-fade-in">
+            <CheckCircle className="w-4 h-4 text-emerald-300" />
+            <span>{toastMessage}</span>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {profileToDelete && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+            <div className="w-full max-w-md p-6 sm:p-8 rounded-[28px] bg-white border border-red-200 shadow-2xl relative text-left">
+              <div className="w-12 h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mb-4">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <h4 className="text-lg font-bold text-[#0D0B1A]">Delete Profile Record?</h4>
+              <p className="mt-2 text-xs sm:text-sm text-[#4A4568]">
+                Are you sure you want to permanently delete the profile for <strong>{profileToDelete.full_name}</strong> ({profileToDelete.email || "No email"})? This action removes the calculated numbers and ephemeris record from the database.
+              </p>
+              <div className="mt-6 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setProfileToDelete(null)}
+                  disabled={isDeleting}
+                  className="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 text-xs font-semibold hover:bg-gray-100 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteProfile(profileToDelete)}
+                  disabled={isDeleting}
+                  className="px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition-colors flex items-center gap-1.5 disabled:opacity-60"
+                >
+                  {isDeleting ? "Deleting..." : "Confirm Delete"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Profile Detail Inspector Modal */}
         {selectedProfile && (

@@ -186,6 +186,26 @@ class AstrologyController extends Controller
         ]);
     }
 
+    // Admin: Delete a stored profile
+    public function adminDeleteProfile(int $id): JsonResponse
+    {
+        $profile = BirthProfile::find($id);
+
+        if (!$profile) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Profile not found',
+            ], 404);
+        }
+
+        $profile->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile deleted successfully',
+        ]);
+    }
+
     public function health(): JsonResponse
     {
         return response()->json([

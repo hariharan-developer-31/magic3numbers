@@ -29,6 +29,8 @@ export default function Home() {
   const [user, setUser] = useState<UserSession | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [currentCalculatingName, setCurrentCalculatingName] = useState("");
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [authUserName, setAuthUserName] = useState("");
 
   // Check saved user session
   useEffect(() => {
@@ -43,6 +45,14 @@ export default function Home() {
   const handleAuthSuccess = (authenticatedUser: UserSession) => {
     setUser(authenticatedUser);
     localStorage.setItem("magic3_user", JSON.stringify(authenticatedUser));
+    setAuthUserName(authenticatedUser.name || "Member");
+    setIsAuthenticating(true);
+
+    // Smooth tactile transition to the new member portal page
+    setTimeout(() => {
+      setIsAuthenticating(false);
+      router.push("/portal");
+    }, 1400);
   };
 
   const handleSignOut = () => {
@@ -163,8 +173,21 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen w-full bg-[#E7E3FB] selection:bg-[#5B3BD1] selection:text-white">
-      {/* Animative Calculation Screen triggered on input submission */}
+      {/* Calculation Loading Screen triggered on input submission */}
       <CalculationLoader isOpen={isCalculating} fullName={currentCalculatingName} />
+
+      {/* Authentication Transition Loading Screen triggered on Sign in / Register */}
+      <CalculationLoader
+        isOpen={isAuthenticating}
+        fullName={authUserName}
+        title="Opening Member Portal"
+        subtitle={`Session Verified for ${authUserName}`}
+        steps={[
+          "Authenticating your cosmic credentials...",
+          "Retrieving member session and planetary ephemeris...",
+          "Opening your personal webapp portal...",
+        ]}
+      />
 
       {/* Fixed Transparent / Adaptive Navbar */}
       <Navbar onScrollToCalculator={scrollToCalculator} />

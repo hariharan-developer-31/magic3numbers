@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, MapPin, Clock, Calendar, User, CheckCircle2, ShieldCheck, HelpCircle, LogOut } from "lucide-react";
+import Link from "next/link";
+import { Sparkles, MapPin, Clock, Calendar, User, CheckCircle2, ShieldCheck, HelpCircle, LogOut, ArrowRight } from "lucide-react";
 import { BirthInput } from "@/types/astrology";
 import { CITIES_DATABASE, CityLocation, searchCities } from "@/lib/geocoding";
 import AuthGate, { UserSession } from "./AuthGate";
@@ -89,6 +90,28 @@ export default function ProfileGeneratorSection({
         ) : (
           /* User is logged in: Show Birth Profile Form with clean box-contained layout */
           <div className="max-w-2xl mx-auto w-full">
+            {/* Direct Member Portal Launcher Card */}
+            <div className="mb-6 p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#5B3BD1] text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl shadow-[#5B3BD1]/25">
+              <div className="text-center sm:text-left">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-[#CFC6F6]">
+                  Dedicated Webapp Workspace
+                </span>
+                <h4 className="text-base sm:text-lg font-bold mt-0.5">
+                  Member Portal: History, Plans &amp; Settings
+                </h4>
+                <p className="text-xs text-[#CFC6F6]/80 mt-1">
+                  Open your dedicated full webapp view with calculation archive and quick tabs.
+                </p>
+              </div>
+              <Link
+                href="/portal"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-full bg-white text-[#5B3BD1] hover:bg-[#CFC6F6] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 flex-shrink-0"
+              >
+                <span>Open Member Portal</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
             {/* Header & Signed-in status pill */}
             <div className="text-center mb-6 sm:mb-8">
               <div className="inline-flex flex-wrap sm:flex-nowrap items-center justify-center gap-2 px-4 py-2 rounded-full bg-white/90 border border-[#5B3BD1]/20 text-xs text-[#0D0B1A] mb-3 shadow-xs max-w-full">
