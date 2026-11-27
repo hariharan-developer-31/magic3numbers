@@ -229,9 +229,10 @@ export default function AuthGate({
         <button
           type="button"
           onClick={handleGuestAccess}
-          className="text-xs text-[#5B3BD1] hover:underline font-medium"
+          className="text-xs text-[#5B3BD1] hover:underline font-medium inline-flex items-center justify-center gap-1 focus:outline-none"
         >
-          Or continue as guest explorer without password &rarr;
+          <span>Or continue as guest</span>
+          <span>&rarr;</span>
         </button>
       </div>
     </div>
