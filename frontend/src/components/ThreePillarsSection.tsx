@@ -98,17 +98,17 @@ export default function ThreePillarsSection() {
           </span>
         </div>
 
-        {/* Swipeable Container on Mobile, 3-column Grid on Desktop */}
+        {/* Swipeable Container on Mobile, 3-column Grid on Desktop - with top & bottom breathing room to prevent hover clipping */}
         <div
           onScroll={handleMobileScroll}
-          className="flex md:grid md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory pb-4 md:pb-0 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0"
+          className="flex md:grid md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory pt-4 pb-6 sm:pt-6 sm:pb-8 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0"
         >
           {pillars.map((pillar) => {
             const Icon = pillar.icon;
             return (
               <div
                 key={pillar.num}
-                className="w-[84vw] max-w-[340px] sm:w-[380px] md:w-auto flex-shrink-0 snap-center group relative flex flex-col justify-between p-6 sm:p-8 lg:p-10 rounded-[28px] bg-[#0D0B1A]/55 border border-[#CFC6F6]/20 backdrop-blur-md transition-all duration-300 ease-editorial hover:border-[#CFC6F6]/40 hover:-translate-y-1.5 shadow-xl"
+                className="w-[84vw] max-w-[340px] sm:w-[380px] md:w-auto flex-shrink-0 snap-center group relative flex flex-col justify-between p-6 sm:p-8 lg:p-10 rounded-[28px] bg-[#0D0B1A]/55 border border-[#CFC6F6]/20 backdrop-blur-md transition-all duration-300 ease-editorial hover:border-[#CFC6F6]/40 md:hover:-translate-y-2 shadow-xl"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">

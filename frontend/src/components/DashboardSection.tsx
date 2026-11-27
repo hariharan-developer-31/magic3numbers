@@ -144,13 +144,13 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
             </span>
           </div>
 
-          {/* The 3 Cards - Swipeable on mobile, 3 cols on tablet/desktop */}
+          {/* The 3 Cards - Swipeable on mobile, 3 cols on tablet/desktop - with top & bottom breathing room */}
           <div
             onScroll={handleNumberScroll}
-            className="flex md:grid md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory pb-4 md:pb-0 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0"
+            className="flex md:grid md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory pt-4 pb-6 sm:pt-6 sm:pb-8 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0"
           >
             {/* Number 1: Life Path Number Card */}
-            <div className="w-[84vw] max-w-[340px] sm:w-[380px] md:w-auto flex-shrink-0 snap-center relative p-6 sm:p-8 rounded-[28px] bg-white/90 border border-white shadow-xl shadow-[#5B3BD1]/5 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1">
+            <div className="w-[84vw] max-w-[340px] sm:w-[380px] md:w-auto flex-shrink-0 snap-center relative p-6 sm:p-8 rounded-[28px] bg-white/90 border border-white shadow-xl shadow-[#5B3BD1]/5 flex flex-col justify-between transition-all duration-300 md:hover:-translate-y-2">
               <div>
                 <div className="flex items-center justify-between mb-5">
                   <span className="text-3xl sm:text-4xl font-extrabold text-[#5B3BD1]/30">01</span>
@@ -188,7 +188,7 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
             </div>
 
             {/* Number 2: Birthday Vibration Card */}
-            <div className="w-[84vw] max-w-[340px] sm:w-[380px] md:w-auto flex-shrink-0 snap-center relative p-6 sm:p-8 rounded-[28px] bg-[#3A1F8C] text-white border border-[#CFC6F6]/30 shadow-2xl flex flex-col justify-between overflow-hidden transition-all duration-300 hover:-translate-y-1">
+            <div className="w-[84vw] max-w-[340px] sm:w-[380px] md:w-auto flex-shrink-0 snap-center relative p-6 sm:p-8 rounded-[28px] bg-[#3A1F8C] text-white border border-[#CFC6F6]/30 shadow-2xl flex flex-col justify-between overflow-hidden transition-all duration-300 md:hover:-translate-y-2">
               <div className="absolute top-0 right-0 w-36 h-36 bg-[#5B3BD1] opacity-50 rounded-full blur-2xl pointer-events-none" />
 
               <div className="relative z-10">
@@ -223,7 +223,7 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
             </div>
 
             {/* Number 3: Expression Number Card */}
-            <div className="w-[84vw] max-w-[340px] sm:w-[380px] md:w-auto flex-shrink-0 snap-center relative p-6 sm:p-8 rounded-[28px] bg-white/90 border border-white shadow-xl shadow-[#5B3BD1]/5 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1">
+            <div className="w-[84vw] max-w-[340px] sm:w-[380px] md:w-auto flex-shrink-0 snap-center relative p-6 sm:p-8 rounded-[28px] bg-white/90 border border-white shadow-xl shadow-[#5B3BD1]/5 flex flex-col justify-between transition-all duration-300 md:hover:-translate-y-2">
               <div>
                 <div className="flex items-center justify-between mb-5">
                   <span className="text-3xl sm:text-4xl font-extrabold text-[#5B3BD1]/30">03</span>
