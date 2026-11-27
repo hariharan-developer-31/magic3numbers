@@ -43,15 +43,11 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
     <section
       id="dashboard-section"
       data-theme="light"
-      className="relative min-h-screen w-full py-16 sm:py-24 md:py-32 bg-[#E7E3FB] text-[#0D0B1A] overflow-hidden"
+      className="relative w-full pt-4 sm:pt-6 pb-12 sm:pb-16 bg-[#E7E3FB] text-[#0D0B1A] overflow-hidden"
     >
       <div className="content-container relative z-10">
         {/* Header with User Metadata */}
-        <div className="mb-10 sm:mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#5B3BD1]/10 text-[#5B3BD1] text-xs font-semibold uppercase tracking-wider mb-3">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Blueprint Calculated &amp; Verified</span>
-          </div>
+        <div className="mb-8 sm:mb-10">
           <h2 className="section-headline uppercase tracking-tight text-[#0D0B1A]">
             Your Cosmic Blueprint: <span className="text-[#5B3BD1]">{input.fullName || "Your Cosmic Identity"}</span>
           </h2>

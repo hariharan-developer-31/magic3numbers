@@ -28,6 +28,7 @@ import {
   Check,
   Layers,
   ArrowLeft,
+  Edit3,
 } from "lucide-react";
 
 export interface StoredCalculation {
@@ -68,17 +69,32 @@ export default function PortalPage() {
   const [history, setHistory] = useState<StoredCalculation[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Account Edit State
+  const [isEditingAccount, setIsEditingAccount] = useState(false);
+  const [accountName, setAccountName] = useState("");
+  const [accountEmail, setAccountEmail] = useState("");
+
   // Calculation Loader
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculatingName, setCalculatingName] = useState("");
 
-  // Check saved session & history on mount
+  // Check saved session & history on mount + support URL query ?tab=history
   useEffect(() => {
     try {
+      if (typeof window !== "undefined") {
+        const urlParams = new URLSearchParams(window.location.search);
+        const requestedTab = urlParams.get("tab");
+        if (requestedTab === "history" || requestedTab === "plans" || requestedTab === "settings" || requestedTab === "webapp") {
+          setActiveTab(requestedTab as any);
+        }
+      }
+
       const savedUser = localStorage.getItem("magic3_user");
       if (savedUser) {
         const parsed = JSON.parse(savedUser);
         setUser(parsed);
+        setAccountName(parsed.name || "");
+        setAccountEmail(parsed.email || "");
         if (parsed.name && parsed.name !== "Guest Explorer") {
           setFullName(parsed.name);
         }
@@ -279,6 +295,36 @@ export default function PortalPage() {
     localStorage.setItem("magic3_user_history", JSON.stringify(updated));
     setToastMessage("Record removed from history.");
     setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const handleEditProfile = (item: StoredCalculation) => {
+    setFullName(item.fullName);
+    setBirthDate(item.birthDate);
+    setBirthTime(item.birthTime || "14:30");
+    setIsTimeUnknown(item.fullData?.input?.isTimeUnknown || false);
+    setBirthCity(item.birthCity || "Kuala Lumpur, Malaysia");
+    if (item.fullData?.input?.latitude) setLatitude(item.fullData.input.latitude);
+    if (item.fullData?.input?.longitude) setLongitude(item.fullData.input.longitude);
+    if (item.fullData?.input?.timezone) setTimezone(item.fullData.input.timezone);
+    if (item.fullData?.input?.utcOffset !== undefined) setUtcOffset(item.fullData.input.utcOffset);
+    setActiveTab("webapp");
+    setToastMessage(`Loaded profile for "${item.fullName}". Edit any field and click calculate.`);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  const handleSaveAccountDetails = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!accountName.trim() || !accountEmail.trim() || !user) return;
+    const updated = {
+      ...user,
+      name: accountName.trim(),
+      email: accountEmail.trim(),
+    };
+    setUser(updated);
+    localStorage.setItem("magic3_user", JSON.stringify(updated));
+    setIsEditingAccount(false);
+    setToastMessage("Account profile details updated successfully.");
+    setTimeout(() => setToastMessage(null), 3500);
   };
 
   if (!authChecked) {
@@ -565,8 +611,16 @@ export default function PortalPage() {
 
                           <div className="flex items-center gap-1.5">
                             <button
+                              onClick={() => handleEditProfile(item)}
+                              className="px-2.5 py-1.5 rounded-xl bg-[#E7E3FB] text-[#5B3BD1] hover:bg-[#5B3BD1] hover:text-white transition-colors text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                              title="Edit birth parameters & recalculate"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                              <span className="hidden sm:inline">Edit</span>
+                            </button>
+                            <button
                               onClick={() => handleOpenFromHistory(item)}
-                              className="px-3 py-1.5 rounded-xl bg-[#5B3BD1] text-white hover:bg-[#3A1F8C] transition-colors text-xs font-semibold flex items-center gap-1"
+                              className="px-3 py-1.5 rounded-xl bg-[#5B3BD1] text-white hover:bg-[#3A1F8C] transition-colors text-xs font-semibold flex items-center gap-1 cursor-pointer"
                               title="View Blueprint"
                             >
                               <Eye className="w-3.5 h-3.5" />
@@ -574,7 +628,7 @@ export default function PortalPage() {
                             </button>
                             <button
                               onClick={() => handleDeleteFromHistory(item.id)}
-                              className="p-1.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-colors"
+                              className="p-1.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-colors cursor-pointer"
                               title="Delete from history"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -726,29 +780,90 @@ export default function PortalPage() {
                 </div>
 
                 <div className="space-y-6">
-                  {/* Session Information */}
+                  {/* Session Information with Edit Option */}
                   <div className="p-6 sm:p-8 rounded-3xl bg-white/90 border border-white shadow-xl">
-                    <h3 className="text-sm font-bold text-[#0D0B1A] uppercase tracking-wider mb-4 flex items-center gap-2">
-                      <User className="w-4 h-4 text-[#5B3BD1]" />
-                      <span>Member Profile Details</span>
-                    </h3>
-                    <div className="space-y-3 text-xs sm:text-sm">
-                      <div className="flex justify-between py-2 border-b border-gray-100">
-                        <span className="text-[#4A4568]">Full Name</span>
-                        <span className="font-semibold text-[#0D0B1A]">{user.name}</span>
-                      </div>
-                      <div className="flex justify-between py-2 border-b border-gray-100">
-                        <span className="text-[#4A4568]">Account Email</span>
-                        <span className="font-semibold text-[#0D0B1A]">{user.email}</span>
-                      </div>
-                      <div className="flex justify-between py-2 border-b border-gray-100">
-                        <span className="text-[#4A4568]">Session Type</span>
-                        <span className="inline-flex items-center gap-1 font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full text-xs">
-                          <Check className="w-3 h-3" />
-                          Authenticated Member
-                        </span>
-                      </div>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-sm font-bold text-[#0D0B1A] uppercase tracking-wider flex items-center gap-2">
+                        <User className="w-4 h-4 text-[#5B3BD1]" />
+                        <span>Member Profile Details</span>
+                      </h3>
+                      {!isEditingAccount && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAccountName(user.name);
+                            setAccountEmail(user.email);
+                            setIsEditingAccount(true);
+                          }}
+                          className="text-xs text-[#5B3BD1] hover:underline font-semibold flex items-center gap-1 cursor-pointer"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          <span>Edit Details</span>
+                        </button>
+                      )}
                     </div>
+
+                    {isEditingAccount ? (
+                      <form onSubmit={handleSaveAccountDetails} className="space-y-4 pt-1">
+                        <div>
+                          <label className="block text-xs uppercase font-semibold text-[#0D0B1A] mb-1">
+                            Your Name
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={accountName}
+                            onChange={(e) => setAccountName(e.target.value)}
+                            className="w-full box-border px-3.5 py-2.5 rounded-xl border border-[#5B3BD1]/30 text-sm focus:outline-none focus:border-[#5B3BD1] bg-[#E7E3FB]/40"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs uppercase font-semibold text-[#0D0B1A] mb-1">
+                            Email Address
+                          </label>
+                          <input
+                            type="email"
+                            required
+                            value={accountEmail}
+                            onChange={(e) => setAccountEmail(e.target.value)}
+                            className="w-full box-border px-3.5 py-2.5 rounded-xl border border-[#5B3BD1]/30 text-sm focus:outline-none focus:border-[#5B3BD1] bg-[#E7E3FB]/40"
+                          />
+                        </div>
+                        <div className="flex items-center gap-2 pt-2">
+                          <button
+                            type="submit"
+                            className="px-4 py-2 rounded-xl bg-[#5B3BD1] text-white text-xs font-bold hover:bg-[#3A1F8C] transition-colors cursor-pointer shadow-xs"
+                          >
+                            Save Changes
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setIsEditingAccount(false)}
+                            className="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 text-xs font-semibold hover:bg-gray-100 transition-colors cursor-pointer"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <div className="space-y-3 text-xs sm:text-sm">
+                        <div className="flex justify-between py-2 border-b border-gray-100">
+                          <span className="text-[#4A4568]">Full Name</span>
+                          <span className="font-semibold text-[#0D0B1A]">{user.name}</span>
+                        </div>
+                        <div className="flex justify-between py-2 border-b border-gray-100">
+                          <span className="text-[#4A4568]">Account Email</span>
+                          <span className="font-semibold text-[#0D0B1A]">{user.email}</span>
+                        </div>
+                        <div className="flex justify-between py-2 border-b border-gray-100">
+                          <span className="text-[#4A4568]">Session Type</span>
+                          <span className="inline-flex items-center gap-1 font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full text-xs">
+                            <Check className="w-3 h-3" />
+                            Authenticated Member
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Engine Calibration */}

@@ -74,11 +74,11 @@ export default function BlueprintPage() {
           ========================================================================= */}
       <header className="sticky top-0 z-40 w-full bg-[#E7E3FB]/90 backdrop-blur-md border-b border-[#5B3BD1]/10 shadow-xs">
         <div className="content-container flex items-center justify-between h-16 sm:h-20 gap-2">
-          {/* Back to Website Button - Only Icon, No Border/Background */}
+          {/* Back Button - Navigates directly to User Profile History Section */}
           <Link
-            href="/"
-            aria-label="Back to Website"
-            title="Back to Website"
+            href="/portal?tab=history"
+            aria-label="Back to History"
+            title="Back to Profile History"
             className="group p-2 sm:p-2.5 -ml-1 sm:-ml-2 rounded-full text-[#5B3BD1] hover:text-[#3A1F8C] hover:bg-[#5B3BD1]/10 transition-all flex items-center justify-center flex-shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B3BD1]"
           >
             <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:-translate-x-1" />
@@ -146,11 +146,11 @@ export default function BlueprintPage() {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
-                href="/"
+                href="/portal?tab=history"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white text-[#0D0B1A] border border-[#5B3BD1]/20 hover:border-[#5B3BD1] hover:bg-[#5B3BD1] hover:text-white transition-all text-xs sm:text-sm font-semibold shadow-sm"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Back to Website</span>
+                <span>Back to Profile History</span>
               </Link>
               <Link
                 href="/#profile-generator"

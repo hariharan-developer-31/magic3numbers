@@ -1,15 +1,34 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Sparkles, Menu, X, ArrowRight } from "lucide-react";
+import { Sparkles, Menu, X, ArrowRight, LogIn, User } from "lucide-react";
 import BrandLogo from "./BrandLogo";
+import { UserSession } from "./AuthGate";
 
 export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?: () => void }) {
   const router = useRouter();
+  const [user, setUser] = useState<UserSession | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDarkSection, setIsDarkSection] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    try {
+      const checkSession = () => {
+        const stored = localStorage.getItem("magic3_user");
+        if (stored) {
+          setUser(JSON.parse(stored));
+        } else {
+          setUser(null);
+        }
+      };
+      checkSession();
+      window.addEventListener("storage", checkSession);
+      return () => window.removeEventListener("storage", checkSession);
+    } catch (e) {}
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -113,8 +132,28 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
             </button>
           </div>
 
-          {/* Right-aligned Primary CTA Button (Tablet & Desktop) */}
-          <div className="hidden sm:flex items-center gap-4">
+          {/* Right-aligned Primary CTA & Sign In Section (Tablet & Desktop) */}
+          <div className="hidden sm:flex items-center gap-3">
+            {user ? (
+              <Link
+                href="/portal"
+                className={`inline-flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full bg-white/90 ${textColorClass} border border-[#5B3BD1]/20 hover:border-[#5B3BD1] transition-all text-xs font-semibold shadow-xs`}
+                title="Open Member Portal"
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+                <span className="truncate max-w-[120px] font-bold">{user.name}</span>
+              </Link>
+            ) : (
+              <Link
+                href="/portal"
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full border border-[#5B3BD1]/30 hover:border-[#5B3BD1] hover:bg-[#5B3BD1]/10 ${textColorClass} transition-all text-xs sm:text-sm font-semibold`}
+                title="Sign In or Create Account"
+              >
+                <LogIn className="w-3.5 h-3.5 text-[#5B3BD1]" />
+                <span>Sign In</span>
+              </Link>
+            )}
+
             <button
               onClick={() => {
                 if (onScrollToCalculator) onScrollToCalculator();
@@ -127,14 +166,34 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
             </button>
           </div>
 
-          {/* Mobile Hamburger Button */}
-          <button
-            onClick={() => setMobileMenuOpen(true)}
-            className={`lg:hidden p-2 rounded-xl transition-colors ${textColorClass} focus:outline-none`}
-            aria-label="Open navigation menu"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
+          {/* Mobile Right Controls: Member/Sign In + Hamburger Button */}
+          <div className="flex sm:hidden items-center gap-2">
+            {user ? (
+              <Link
+                href="/portal"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-white/90 border border-[#5B3BD1]/20 text-xs font-semibold text-[#0D0B1A] shadow-xs"
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+                <span className="truncate max-w-[70px]">{user.name}</span>
+              </Link>
+            ) : (
+              <Link
+                href="/portal"
+                className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full border border-[#5B3BD1]/30 text-xs font-semibold ${textColorClass}`}
+              >
+                <LogIn className="w-3.5 h-3.5 text-[#5B3BD1]" />
+                <span>Sign In</span>
+              </Link>
+            )}
+
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className={`p-2 rounded-xl transition-colors ${textColorClass} focus:outline-none`}
+              aria-label="Open navigation menu"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -158,7 +217,34 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
           </div>
 
           {/* Navigation Links with Arrow Indicators - neatly aligned directly below top bar */}
-          <div className="flex flex-col gap-3 pt-5 sm:pt-6 pb-4 overflow-y-auto">
+          <div className="flex flex-col gap-3 pt-4 sm:pt-6 pb-4 overflow-y-auto">
+            {/* Mobile Drawer Member / Sign In Card */}
+            {user ? (
+              <Link
+                href="/portal"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#5B3BD1]/25 border border-[#5B3BD1]/50 text-white font-semibold text-sm mb-1"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                  <span>Signed in as <strong>{user.name}</strong></span>
+                </div>
+                <span className="text-xs text-[#CFC6F6] font-bold">Portal &rarr;</span>
+              </Link>
+            ) : (
+              <Link
+                href="/portal"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold text-sm mb-1 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <LogIn className="w-4 h-4 text-[#CFC6F6]" />
+                  <span>Sign In / Create Account</span>
+                </div>
+                <ArrowRight className="w-4 h-4 text-[#CFC6F6]" />
+              </Link>
+            )}
+
             <button
               onClick={() => scrollTo("three-pillars")}
               className="flex items-center justify-between text-left py-3 px-4 rounded-2xl hover:bg-white/5 border border-white/10 text-base font-semibold transition-colors"
