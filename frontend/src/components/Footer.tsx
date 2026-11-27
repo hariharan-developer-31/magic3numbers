@@ -68,9 +68,6 @@ export default function Footer() {
         {/* Bottom Copyright */}
         <div className="mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-[#CFC6F6]/60 gap-3">
           <p>&copy; {new Date().getFullYear()} magic3numbers. All rights reserved.</p>
-          <div className="flex items-center gap-4 text-[11px]">
-            <span>Deterministic Engine v1.0.0</span>
-          </div>
         </div>
       </div>
     </footer>
