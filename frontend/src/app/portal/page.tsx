@@ -380,10 +380,10 @@ export default function PortalPage() {
                 </div>
 
                 {/* Form Card */}
-                <div className="w-full rounded-[28px] sm:rounded-[36px] bg-white/90 backdrop-blur-xl border border-white shadow-xl shadow-[#5B3BD1]/5 p-5 sm:p-8 md:p-10 box-border overflow-hidden">
-                  <form onSubmit={handleCalculate} className="space-y-5 sm:space-y-6">
+                <div className="w-full max-w-full rounded-[28px] sm:rounded-[36px] bg-white/90 backdrop-blur-xl border border-white shadow-xl shadow-[#5B3BD1]/5 p-5 sm:p-8 md:p-10 box-border overflow-hidden">
+                  <form onSubmit={handleCalculate} className="space-y-5 sm:space-y-6 w-full max-w-full overflow-hidden">
                     {/* Full Birth Name */}
-                    <div>
+                    <div className="w-full max-w-full min-w-0">
                       <label className="block text-xs uppercase tracking-wider font-semibold text-[#0D0B1A] mb-1.5 flex items-center justify-between">
                         <span className="flex items-center gap-1.5">
                           <User className="w-3.5 h-3.5 text-[#5B3BD1]" />
@@ -399,12 +399,12 @@ export default function PortalPage() {
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         placeholder="e.g. Maya Lin, Alexander, Hari..."
-                        className="w-full box-border px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] placeholder-[#4A4568]/50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-sm sm:text-base font-medium transition-all"
+                        className="w-full max-w-full min-w-0 box-border px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] placeholder-[#4A4568]/50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-base font-medium transition-all"
                       />
                     </div>
 
                     {/* Date of Birth */}
-                    <div>
+                    <div className="w-full max-w-full min-w-0">
                       <label className="block text-xs uppercase tracking-wider font-semibold text-[#0D0B1A] mb-1.5 flex items-center gap-1.5">
                         <Calendar className="w-3.5 h-3.5 text-[#5B3BD1]" />
                         <span>Date of Birth</span>
@@ -414,12 +414,12 @@ export default function PortalPage() {
                         required
                         value={birthDate}
                         onChange={(e) => setBirthDate(e.target.value)}
-                        className="w-full box-border px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-sm sm:text-base font-medium transition-all"
+                        className="w-full max-w-full min-w-0 box-border appearance-none px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-base font-medium transition-all"
                       />
                     </div>
 
                     {/* Birth Time */}
-                    <div>
+                    <div className="w-full max-w-full min-w-0">
                       <div className="flex items-center justify-between mb-1.5">
                         <label className="text-xs uppercase tracking-wider font-semibold text-[#0D0B1A] flex items-center gap-1.5">
                           <Clock className="w-3.5 h-3.5 text-[#5B3BD1]" />
@@ -440,12 +440,12 @@ export default function PortalPage() {
                         disabled={isTimeUnknown}
                         value={birthTime}
                         onChange={(e) => setBirthTime(e.target.value)}
-                        className="w-full box-border px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] disabled:opacity-50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-sm sm:text-base font-medium transition-all"
+                        className="w-full max-w-full min-w-0 box-border appearance-none px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] disabled:opacity-50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-base font-medium transition-all"
                       />
                     </div>
 
                     {/* Birthplace Location */}
-                    <div>
+                    <div className="w-full max-w-full min-w-0">
                       <label className="block text-xs uppercase tracking-wider font-semibold text-[#0D0B1A] mb-1.5 flex items-center justify-between">
                         <span className="flex items-center gap-1.5">
                           <MapPin className="w-3.5 h-3.5 text-[#5B3BD1]" />
@@ -461,7 +461,7 @@ export default function PortalPage() {
                         value={birthCity}
                         onChange={(e) => setBirthCity(e.target.value)}
                         placeholder="e.g. London, Tokyo, New York..."
-                        className="w-full box-border px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] placeholder-[#4A4568]/50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-sm sm:text-base font-medium transition-all"
+                        className="w-full max-w-full min-w-0 box-border px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] placeholder-[#4A4568]/50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-base font-medium transition-all"
                       />
                     </div>
 
@@ -511,7 +511,7 @@ export default function PortalPage() {
                       onClick={() => setActiveTab("webapp")}
                       className="px-5 py-2.5 rounded-full bg-[#5B3BD1] text-white text-xs font-semibold hover:bg-[#3A1F8C] transition-all"
                     >
-                      Open Webapp Calculator &rarr;
+                      Open 3 Numbers Calculator &rarr;
                     </button>
                   </div>
                 ) : (
@@ -647,7 +647,7 @@ export default function PortalPage() {
                         onClick={() => setActiveTab("webapp")}
                         className="w-full py-3 rounded-xl bg-gray-100 text-[#0D0B1A] text-xs font-bold hover:bg-gray-200 transition-colors uppercase tracking-wider"
                       >
-                        Calculate In Webapp
+                        Calculate Your 3 Numbers
                       </button>
                     </div>
                   </div>
@@ -828,8 +828,8 @@ export default function PortalPage() {
                   : "text-[#CFC6F6]/70 hover:text-white hover:bg-white/5 font-medium"
               }`}
             >
-              <Compass className="w-5 h-5 mb-0.5" />
-              <span className="text-[11px] tracking-tight">Webapp</span>
+              <Sparkles className="w-5 h-5 mb-0.5" />
+              <span className="text-[11px] tracking-tight">3 Numbers</span>
             </button>
 
             <button

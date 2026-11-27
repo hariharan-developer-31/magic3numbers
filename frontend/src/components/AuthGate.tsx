@@ -172,7 +172,7 @@ export default function AuthGate({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Maya Lin, Alexander, Hari..."
-              className="w-full px-4 py-3 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] placeholder-[#4A4568]/50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-sm font-medium transition-all"
+              className="w-full max-w-full min-w-0 box-border px-4 py-3 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] placeholder-[#4A4568]/50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-base font-medium transition-all"
             />
           </div>
         )}
@@ -188,7 +188,7 @@ export default function AuthGate({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="e.g. alex@example.com"
-            className="w-full px-4 py-3 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] placeholder-[#4A4568]/50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-sm font-medium transition-all"
+            className="w-full max-w-full min-w-0 box-border px-4 py-3 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] placeholder-[#4A4568]/50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-base font-medium transition-all"
           />
         </div>
 
@@ -204,7 +204,7 @@ export default function AuthGate({
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Min 6 characters"
-            className="w-full px-4 py-3 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] placeholder-[#4A4568]/50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-sm font-medium transition-all"
+            className="w-full max-w-full min-w-0 box-border px-4 py-3 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] placeholder-[#4A4568]/50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-base font-medium transition-all"
           />
         </div>
 

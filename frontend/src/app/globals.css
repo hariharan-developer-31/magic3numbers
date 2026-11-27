@@ -32,6 +32,34 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
+/* Disable iOS Safari auto-zoom on input focus by guaranteeing 16px minimum font size */
+@media screen and (max-width: 1024px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Fix iOS Safari date/time input width blowout and alignment */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+  appearance: none;
+  -webkit-appearance: none;
+  max-width: 100%;
+  width: 100%;
+  min-width: 0;
+  display: block;
+  box-sizing: border-box;
+}
+
+input[type="date"]::-webkit-date-and-time-value,
+input[type="time"]::-webkit-date-and-time-value {
+  text-align: left;
+  min-height: 1.5em;
+}
+
 html {
   scroll-behavior: smooth;
   font-family: var(--font-poppins);

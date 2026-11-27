@@ -157,7 +157,7 @@ export default function ProfileGeneratorSection({
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="e.g. Maya Lin, Alexander, Hari..."
-                    className="w-full box-border px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] placeholder-[#4A4568]/50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-sm sm:text-base font-medium transition-all"
+                    className="w-full max-w-full min-w-0 box-border px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] placeholder-[#4A4568]/50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-base font-medium transition-all"
                   />
                 </div>
 
@@ -174,7 +174,7 @@ export default function ProfileGeneratorSection({
                       required
                       value={birthDate}
                       onChange={(e) => setBirthDate(e.target.value)}
-                      className="w-full box-border px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-sm sm:text-base font-medium transition-all"
+                      className="w-full max-w-full min-w-0 box-border appearance-none px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-base font-medium transition-all"
                     />
                   </div>
 
@@ -200,7 +200,7 @@ export default function ProfileGeneratorSection({
                       disabled={isTimeUnknown}
                       value={birthTime}
                       onChange={(e) => setBirthTime(e.target.value)}
-                      className={`w-full box-border px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl border text-[#0D0B1A] text-sm sm:text-base font-medium transition-all ${
+                      className={`w-full max-w-full min-w-0 box-border appearance-none px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl border text-[#0D0B1A] text-base font-medium transition-all ${
                         isTimeUnknown
                           ? "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
                           : "bg-[#E7E3FB]/40 border-[#5B3BD1]/20 focus:outline-none focus:border-[#5B3BD1] focus:bg-white"
