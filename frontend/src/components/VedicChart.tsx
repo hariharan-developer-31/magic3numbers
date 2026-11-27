@@ -32,9 +32,9 @@ export default function VedicChart({ vedic }: { vedic: VedicProfile }) {
   const currentHouseDetail = vedic.houses.find((h) => h.house === selectedHouse);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 items-center justify-between p-6 sm:p-8 rounded-3xl bg-white/70 border border-[#5B3BD1]/15 backdrop-blur-md">
+    <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 items-center justify-between p-5 sm:p-8 rounded-[28px] bg-white/75 border border-[#5B3BD1]/15 backdrop-blur-md shadow-md">
       {/* Interactive North Indian D1 Chart SVG */}
-      <div className="relative w-full max-w-[340px] sm:max-w-[400px] aspect-square flex-shrink-0">
+      <div className="relative w-full max-w-[280px] sm:max-w-[340px] md:max-w-[380px] aspect-square flex-shrink-0 mx-auto">
         <svg
           viewBox="0 0 400 400"
           className="w-full h-full text-[#3A1F8C] drop-shadow-sm select-none"
@@ -77,7 +77,7 @@ export default function VedicChart({ vedic }: { vedic: VedicProfile }) {
             {housePlanets[1].join(" ")}
           </text>
 
-          {/* House 2 (Top Left Triangle) */}
+          {/* House 2 */}
           <polygon
             points="4,4 200,4 102,102"
             fill={selectedHouse === 2 ? "#CFC6F6" : "transparent"}
@@ -105,7 +105,7 @@ export default function VedicChart({ vedic }: { vedic: VedicProfile }) {
             {housePlanets[3].join(" ")}
           </text>
 
-          {/* House 4 (Left Center Diamond) */}
+          {/* House 4 */}
           <polygon
             points="4,200 102,102 200,200 102,298"
             fill={selectedHouse === 4 ? "#CFC6F6" : "transparent"}
@@ -147,7 +147,7 @@ export default function VedicChart({ vedic }: { vedic: VedicProfile }) {
             {housePlanets[6].join(" ")}
           </text>
 
-          {/* House 7 (Bottom Center Diamond) */}
+          {/* House 7 */}
           <polygon
             points="200,200 298,298 200,396 102,298"
             fill={selectedHouse === 7 ? "#CFC6F6" : "transparent"}
@@ -189,7 +189,7 @@ export default function VedicChart({ vedic }: { vedic: VedicProfile }) {
             {housePlanets[9].join(" ")}
           </text>
 
-          {/* House 10 (Right Center Diamond) */}
+          {/* House 10 */}
           <polygon
             points="200,200 298,102 396,200 298,298"
             fill={selectedHouse === 10 ? "#CFC6F6" : "transparent"}
@@ -235,20 +235,20 @@ export default function VedicChart({ vedic }: { vedic: VedicProfile }) {
 
       {/* House & Planetary Placement Details Inspector */}
       <div className="w-full flex-1 lg:pl-6">
-        <div className="flex items-center justify-between border-b border-[#5B3BD1]/15 pb-4 mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#5B3BD1]/15 pb-4 mb-4">
           <div>
             <span className="editorial-caption text-[#5B3BD1]">Vedic Kundali Inspector</span>
-            <h4 className="text-xl font-bold text-[#0D0B1A]">
+            <h4 className="text-lg sm:text-xl font-bold text-[#0D0B1A]">
               House {selectedHouse}: {currentHouseDetail?.sign} (Lord: {currentHouseDetail?.lord})
             </h4>
           </div>
-          <span className="text-xs px-3 py-1 rounded-full bg-[#5B3BD1] text-white font-mono">
+          <span className="text-[11px] sm:text-xs px-3 py-1 rounded-full bg-[#5B3BD1] text-white font-mono w-fit">
             Lahiri {vedic.ayanamsa}°
           </span>
         </div>
 
         {/* Resident Planets in Selected House */}
-        <div className="mb-6">
+        <div className="mb-5">
           <span className="text-xs font-semibold uppercase tracking-wider text-[#4A4568] block mb-2">
             Resident Planets ({currentHouseDetail?.planets.length || 0})
           </span>
@@ -259,12 +259,12 @@ export default function VedicChart({ vedic }: { vedic: VedicProfile }) {
                 return (
                   <div
                     key={idx}
-                    className="px-3.5 py-2 rounded-xl bg-white border border-[#5B3BD1]/20 text-xs font-semibold text-[#0D0B1A] flex items-center gap-2 shadow-xs"
+                    className="px-3 py-1.5 rounded-xl bg-white border border-[#5B3BD1]/20 text-xs font-semibold text-[#0D0B1A] flex items-center gap-2 shadow-xs"
                   >
                     <span className="w-2 h-2 rounded-full bg-[#5B3BD1]" />
                     <span>{p}</span>
-                    <span className="text-[#4A4568] font-mono">
-                      {placement ? `${placement.longitude.toFixed(1)}° (${placement.nakshatra} P${placement.pada})` : ""}
+                    <span className="text-[#4A4568] font-mono text-[11px]">
+                      {placement ? `${placement.longitude.toFixed(1)}° (${placement.nakshatra})` : ""}
                     </span>
                   </div>
                 );
@@ -276,23 +276,23 @@ export default function VedicChart({ vedic }: { vedic: VedicProfile }) {
         </div>
 
         {/* Quick Placements Table */}
-        <div className="max-h-48 overflow-y-auto rounded-xl border border-[#5B3BD1]/15 bg-white/60">
+        <div className="max-h-44 sm:max-h-48 overflow-y-auto rounded-xl border border-[#5B3BD1]/15 bg-white/60">
           <table className="w-full text-left text-xs">
             <thead className="bg-[#E7E3FB] text-[#0D0B1A] font-semibold sticky top-0">
               <tr>
-                <th className="p-2.5">Planet</th>
-                <th className="p-2.5">Sign</th>
-                <th className="p-2.5">Nakshatra</th>
-                <th className="p-2.5">House</th>
+                <th className="p-2 sm:p-2.5">Planet</th>
+                <th className="p-2 sm:p-2.5">Sign</th>
+                <th className="p-2 sm:p-2.5">Nakshatra</th>
+                <th className="p-2 sm:p-2.5">House</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#5B3BD1]/10">
               {vedic.placements.map((p, i) => (
                 <tr key={i} className="hover:bg-[#E7E3FB]/40 transition-colors">
-                  <td className="p-2.5 font-bold text-[#5B3BD1]">{p.planet}</td>
-                  <td className="p-2.5 font-medium">{p.sign}</td>
-                  <td className="p-2.5 text-[#4A4568]">{p.nakshatra} (P{p.pada})</td>
-                  <td className="p-2.5 font-mono">H{p.house || "-"}</td>
+                  <td className="p-2 sm:p-2.5 font-bold text-[#5B3BD1]">{p.planet}</td>
+                  <td className="p-2 sm:p-2.5 font-medium">{p.sign}</td>
+                  <td className="p-2 sm:p-2.5 text-[#4A4568]">{p.nakshatra} (P{p.pada})</td>
+                  <td className="p-2 sm:p-2.5 font-mono">H{p.house || "-"}</td>
                 </tr>
               ))}
             </tbody>
