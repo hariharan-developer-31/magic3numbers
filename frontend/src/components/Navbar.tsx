@@ -111,18 +111,6 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
             >
               Your 3 Numbers
             </button>
-            <button
-              onClick={() => handleNavigateToBlueprint("insights-calendar")}
-              className={`nav-link ${textColorClass} hover:opacity-80 transition-opacity`}
-            >
-              Personal Calendar
-            </button>
-            <button
-              onClick={() => handleNavigateToBlueprint("premium-reports")}
-              className={`nav-link ${textColorClass} hover:opacity-80 transition-opacity`}
-            >
-              Reports
-            </button>
           </div>
 
           {/* Right-aligned Primary CTA Button (Tablet & Desktop) */}
@@ -190,20 +178,6 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
               className="flex items-center justify-between text-left py-3 px-4 rounded-2xl bg-[#5B3BD1]/20 border border-[#5B3BD1]/40 text-base font-bold text-[#CFC6F6] transition-colors"
             >
               <span>Your 3 Numbers</span>
-              <ArrowRight className="w-4 h-4 text-[#CFC6F6]" />
-            </button>
-            <button
-              onClick={() => handleNavigateToBlueprint("insights-calendar")}
-              className="flex items-center justify-between text-left py-3 px-4 rounded-2xl hover:bg-white/5 border border-white/10 text-base font-semibold transition-colors"
-            >
-              <span>Personal Calendar</span>
-              <ArrowRight className="w-4 h-4 text-[#CFC6F6]" />
-            </button>
-            <button
-              onClick={() => handleNavigateToBlueprint("premium-reports")}
-              className="flex items-center justify-between text-left py-3 px-4 rounded-2xl hover:bg-white/5 border border-white/10 text-base font-semibold transition-colors"
-            >
-              <span>Reports &amp; Dossiers</span>
               <ArrowRight className="w-4 h-4 text-[#CFC6F6]" />
             </button>
           </div>
