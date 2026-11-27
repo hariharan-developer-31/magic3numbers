@@ -53,7 +53,7 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
           </h2>
           <p className="mt-2 text-xs sm:text-sm text-[#4A4568] font-mono break-words">
             Born {input.birthDate} {input.isTimeUnknown ? "(Time Unverified)" : `@ ${input.birthTime}`}{" "}
-            &bull; {input.birthCity} ({input.latitude.toFixed(2)}°N, {input.longitude.toFixed(2)}°E)
+            &bull; {input.birthCity || "Unknown Location"} ({typeof input.latitude === "number" ? input.latitude.toFixed(2) : Number(input.latitude || 0).toFixed(2)}°N, {typeof input.longitude === "number" ? input.longitude.toFixed(2) : Number(input.longitude || 0).toFixed(2)}°E)
           </p>
         </div>
 

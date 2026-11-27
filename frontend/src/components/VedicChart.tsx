@@ -243,7 +243,7 @@ export default function VedicChart({ vedic }: { vedic: VedicProfile }) {
             </h4>
           </div>
           <span className="text-[11px] sm:text-xs px-3 py-1 rounded-full bg-[#5B3BD1] text-white font-mono w-fit">
-            Lahiri {vedic.ayanamsa}°
+            Lahiri {typeof vedic.ayanamsa === "number" ? vedic.ayanamsa.toFixed(2) : (vedic.ayanamsa || "24.1")}°
           </span>
         </div>
 
@@ -264,7 +264,7 @@ export default function VedicChart({ vedic }: { vedic: VedicProfile }) {
                     <span className="w-2 h-2 rounded-full bg-[#5B3BD1]" />
                     <span>{p}</span>
                     <span className="text-[#4A4568] font-mono text-[11px]">
-                      {placement ? `${placement.longitude.toFixed(1)}° (${placement.nakshatra})` : ""}
+                      {placement ? `${Number(placement.longitude || 0).toFixed(1)}° (${placement.nakshatra})` : ""}
                     </span>
                   </div>
                 );

@@ -110,7 +110,7 @@ export default function BlueprintPage() {
             </button>
 
             <Link
-              href="/#profile-generator"
+              href="/portal?tab=webapp"
               className="inline-flex items-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2 rounded-full bg-[#5B3BD1] text-white hover:bg-[#3A1F8C] transition-colors text-xs font-semibold shadow-xs"
             >
               <RefreshCw className="w-3.5 h-3.5" />
@@ -153,7 +153,7 @@ export default function BlueprintPage() {
                 <span>Back to Profile History</span>
               </Link>
               <Link
-                href="/#profile-generator"
+                href="/portal?tab=webapp"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#5B3BD1] text-white hover:bg-[#3A1F8C] transition-colors text-xs sm:text-sm font-semibold shadow-sm"
               >
                 <Sparkles className="w-4 h-4 text-[#CFC6F6]" />

@@ -8,6 +8,7 @@ import CalculationLoader from "@/components/CalculationLoader";
 import AuthGate, { UserSession } from "@/components/AuthGate";
 import { BirthInput, FullCosmicAnalysis } from "@/types/astrology";
 import { performFullAnalysis } from "@/lib/engines/synthesis";
+import { CITIES_DATABASE, CityLocation, searchCities } from "@/lib/geocoding";
 import {
   Compass,
   History,
@@ -64,6 +65,8 @@ export default function PortalPage() {
   const [longitude, setLongitude] = useState(101.6869);
   const [timezone, setTimezone] = useState("Asia/Kuala_Lumpur");
   const [utcOffset, setUtcOffset] = useState(8);
+  const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
+  const [filteredCities, setFilteredCities] = useState<CityLocation[]>(CITIES_DATABASE.slice(0, 5));
 
   // History state
   const [history, setHistory] = useState<StoredCalculation[]>([]);
@@ -77,6 +80,22 @@ export default function PortalPage() {
   // Calculation Loader
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculatingName, setCalculatingName] = useState("");
+
+  const handleCityInput = (val: string) => {
+    setBirthCity(val);
+    const matches = searchCities(val);
+    setFilteredCities(matches);
+    setCityDropdownOpen(true);
+  };
+
+  const handleSelectCity = (city: CityLocation) => {
+    setBirthCity(`${city.city}, ${city.country}`);
+    setLatitude(city.latitude);
+    setLongitude(city.longitude);
+    setTimezone(city.timezone);
+    setUtcOffset(city.utcOffset);
+    setCityDropdownOpen(false);
+  };
 
   // Check saved session & history on mount + support URL query ?tab=history
   useEffect(() => {
@@ -108,25 +127,42 @@ export default function PortalPage() {
         // Fallback to active blueprint if available
         const activeBlueprint = localStorage.getItem("magic3_active_blueprint");
         if (activeBlueprint) {
-          const bp: FullCosmicAnalysis = JSON.parse(activeBlueprint);
-          const initialRecord: StoredCalculation = {
-            id: Date.now(),
-            fullName: bp.input.fullName,
-            birthDate: bp.input.birthDate,
-            birthTime: bp.input.birthTime,
-            birthCity: bp.input.birthCity,
-            sunSign: bp.western.sunSign,
-            moonSign: bp.vedic.moonSign,
-            nakshatra: bp.vedic.moonNakshatra,
-            lifePathNumber: bp.numerology.lifePathNumber,
-            birthdayNumber: bp.numerology.birthdayNumber,
-            expressionNumber: bp.numerology.expressionNumber,
-            isMasterNumber: bp.numerology.isMasterLifePath,
-            calculatedAt: bp.calculatedAt || new Date().toISOString(),
-            fullData: bp,
-          };
-          setHistory([initialRecord]);
-          localStorage.setItem("magic3_user_history", JSON.stringify([initialRecord]));
+          try {
+            const bp: FullCosmicAnalysis = JSON.parse(activeBlueprint);
+            const initialRecord: StoredCalculation = {
+              id: Date.now(),
+              fullName: bp.input.fullName,
+              birthDate: bp.input.birthDate,
+              birthTime: bp.input.birthTime,
+              birthCity: bp.input.birthCity,
+              sunSign: bp.western.sunSign,
+              moonSign: bp.vedic.moonSign,
+              nakshatra: bp.vedic.moonNakshatra,
+              lifePathNumber: bp.numerology.lifePathNumber,
+              birthdayNumber: bp.numerology.birthdayNumber,
+              expressionNumber: bp.numerology.expressionNumber,
+              isMasterNumber: bp.numerology.isMasterLifePath,
+              calculatedAt: bp.calculatedAt || new Date().toISOString(),
+              fullData: bp,
+            };
+            setHistory([initialRecord]);
+            localStorage.setItem("magic3_user_history", JSON.stringify([initialRecord]));
+
+            // Ensure guest session if savedUser is null
+            if (!savedUser) {
+              const guestSession: UserSession = {
+                name: bp.input.fullName || "Cosmic Explorer",
+                email: "guest@magic3numbers.com",
+              };
+              setUser(guestSession);
+              localStorage.setItem("magic3_user", JSON.stringify(guestSession));
+              setAccountName(guestSession.name);
+              setAccountEmail(guestSession.email);
+              if (bp.input.fullName) {
+                setFullName(bp.input.fullName);
+              }
+            }
+          } catch (e) {}
         }
       }
     } catch (e) {
@@ -490,8 +526,8 @@ export default function PortalPage() {
                       />
                     </div>
 
-                    {/* Birthplace Location */}
-                    <div className="w-full max-w-full min-w-0">
+                    {/* Birthplace Location with Autocomplete */}
+                    <div className="w-full max-w-full min-w-0 relative">
                       <label className="block text-xs uppercase tracking-wider font-semibold text-[#0D0B1A] mb-1.5 flex items-center justify-between">
                         <span className="flex items-center gap-1.5">
                           <MapPin className="w-3.5 h-3.5 text-[#5B3BD1]" />
@@ -505,10 +541,30 @@ export default function PortalPage() {
                         type="text"
                         required
                         value={birthCity}
-                        onChange={(e) => setBirthCity(e.target.value)}
-                        placeholder="e.g. London, Tokyo, New York..."
+                        onChange={(e) => handleCityInput(e.target.value)}
+                        onFocus={() => setCityDropdownOpen(true)}
+                        placeholder="e.g. London, Tokyo, New York, Kuala Lumpur..."
                         className="w-full max-w-full min-w-0 box-border px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] placeholder-[#4A4568]/50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-base font-medium transition-all"
                       />
+
+                      {/* City Dropdown Menu */}
+                      {cityDropdownOpen && filteredCities.length > 0 && (
+                        <div className="absolute left-0 right-0 top-full mt-1.5 bg-white border border-[#5B3BD1]/20 rounded-2xl shadow-xl z-50 overflow-hidden max-h-56 overflow-y-auto">
+                          {filteredCities.map((city) => (
+                            <button
+                              key={`${city.city}-${city.country}`}
+                              type="button"
+                              onClick={() => handleSelectCity(city)}
+                              className="w-full px-4 py-2.5 text-left text-xs sm:text-sm hover:bg-[#E7E3FB]/60 flex items-center justify-between text-[#0D0B1A] border-b border-gray-100 last:border-0 cursor-pointer"
+                            >
+                              <span className="font-semibold">{city.city}, {city.country}</span>
+                              <span className="text-[10px] sm:text-[11px] text-gray-500 font-mono">
+                                UTC{city.utcOffset >= 0 ? `+${city.utcOffset}` : city.utcOffset}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     {/* Metadata Badges */}

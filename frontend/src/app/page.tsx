@@ -139,6 +139,40 @@ export default function Home() {
         localStorage.setItem("magic3_admin_records", JSON.stringify([newRecord, ...existingRecords]));
       } catch (e) {}
 
+      // Ensure user calculation history is recorded for the member portal
+      try {
+        const existingHistory = JSON.parse(localStorage.getItem("magic3_user_history") || "[]");
+        const newHistoryRecord = {
+          id: Date.now(),
+          fullName: input.fullName,
+          birthDate: input.birthDate,
+          birthTime: input.birthTime,
+          birthCity: input.birthCity,
+          sunSign: calculatedResult.western.sunSign,
+          moonSign: calculatedResult.vedic.moonSign,
+          nakshatra: calculatedResult.vedic.moonNakshatra,
+          lifePathNumber: calculatedResult.numerology.lifePathNumber,
+          birthdayNumber: calculatedResult.numerology.birthdayNumber,
+          expressionNumber: calculatedResult.numerology.expressionNumber,
+          isMasterNumber: calculatedResult.numerology.isMasterLifePath,
+          calculatedAt: new Date().toISOString(),
+          fullData: calculatedResult,
+        };
+        const updated = [newHistoryRecord, ...existingHistory.filter((h: any) => h.fullName !== input.fullName)];
+        localStorage.setItem("magic3_user_history", JSON.stringify(updated));
+
+        // Ensure session exists so when navigating back to /portal?tab=history the user is authenticated
+        const existingUser = localStorage.getItem("magic3_user");
+        if (!existingUser) {
+          const guestSession = {
+            name: input.fullName || "Cosmic Explorer",
+            email: "guest@magic3numbers.com",
+          };
+          localStorage.setItem("magic3_user", JSON.stringify(guestSession));
+          setUser(guestSession);
+        }
+      } catch (e) {}
+
       // Persist active blueprint for the dedicated /blueprint page
       localStorage.setItem("magic3_active_blueprint", JSON.stringify(calculatedResult));
 
