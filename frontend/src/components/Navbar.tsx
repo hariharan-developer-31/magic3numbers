@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Sparkles, Menu, X, ArrowRight } from "lucide-react";
 import BrandLogo from "./BrandLogo";
 
 export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?: () => void }) {
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDarkSection, setIsDarkSection] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -56,6 +58,18 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
     }, 80);
   };
 
+  const handleNavigateToBlueprint = (targetHash?: string) => {
+    setMobileMenuOpen(false);
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("magic3_active_blueprint");
+      if (stored) {
+        router.push(targetHash ? `/blueprint#${targetHash}` : "/blueprint");
+        return;
+      }
+    }
+    scrollTo("profile-generator");
+  };
+
   const textColorClass = isDarkSection ? "text-white" : "text-[#0D0B1A]";
   const navBgClass = isScrolled
     ? isDarkSection
@@ -92,19 +106,19 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
               Calculate Blueprint
             </button>
             <button
-              onClick={() => scrollTo("dashboard-section")}
+              onClick={() => handleNavigateToBlueprint()}
               className={`nav-link ${textColorClass} hover:opacity-80 transition-opacity`}
             >
               Your 3 Numbers
             </button>
             <button
-              onClick={() => scrollTo("insights-calendar")}
+              onClick={() => handleNavigateToBlueprint("insights-calendar")}
               className={`nav-link ${textColorClass} hover:opacity-80 transition-opacity`}
             >
               Personal Calendar
             </button>
             <button
-              onClick={() => scrollTo("premium-reports")}
+              onClick={() => handleNavigateToBlueprint("premium-reports")}
               className={`nav-link ${textColorClass} hover:opacity-80 transition-opacity`}
             >
               Reports
@@ -172,21 +186,21 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
               <ArrowRight className="w-4 h-4 text-[#CFC6F6]" />
             </button>
             <button
-              onClick={() => scrollTo("dashboard-section")}
+              onClick={() => handleNavigateToBlueprint()}
               className="flex items-center justify-between text-left py-3 px-4 rounded-2xl bg-[#5B3BD1]/20 border border-[#5B3BD1]/40 text-base font-bold text-[#CFC6F6] transition-colors"
             >
               <span>Your 3 Numbers</span>
               <ArrowRight className="w-4 h-4 text-[#CFC6F6]" />
             </button>
             <button
-              onClick={() => scrollTo("insights-calendar")}
+              onClick={() => handleNavigateToBlueprint("insights-calendar")}
               className="flex items-center justify-between text-left py-3 px-4 rounded-2xl hover:bg-white/5 border border-white/10 text-base font-semibold transition-colors"
             >
               <span>Personal Calendar</span>
               <ArrowRight className="w-4 h-4 text-[#CFC6F6]" />
             </button>
             <button
-              onClick={() => scrollTo("premium-reports")}
+              onClick={() => handleNavigateToBlueprint("premium-reports")}
               className="flex items-center justify-between text-left py-3 px-4 rounded-2xl hover:bg-white/5 border border-white/10 text-base font-semibold transition-colors"
             >
               <span>Reports &amp; Dossiers</span>

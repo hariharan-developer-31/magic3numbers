@@ -1,13 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import ThreePillarsSection from "@/components/ThreePillarsSection";
 import ProfileGeneratorSection from "@/components/ProfileGeneratorSection";
-import DashboardSection from "@/components/DashboardSection";
-import InsightsCalendarSection from "@/components/InsightsCalendarSection";
-import PremiumReportSection from "@/components/PremiumReportSection";
 import Footer from "@/components/Footer";
 import CalculationLoader from "@/components/CalculationLoader";
 import { UserSession } from "@/components/AuthGate";
@@ -27,8 +25,8 @@ const INITIAL_INPUT: BirthInput = {
 };
 
 export default function Home() {
+  const router = useRouter();
   const [user, setUser] = useState<UserSession | null>(null);
-  const [analysis, setAnalysis] = useState<FullCosmicAnalysis>(() => performFullAnalysis(INITIAL_INPUT));
   const [isCalculating, setIsCalculating] = useState(false);
   const [currentCalculatingName, setCurrentCalculatingName] = useState("");
 
@@ -131,28 +129,22 @@ export default function Home() {
         localStorage.setItem("magic3_admin_records", JSON.stringify([newRecord, ...existingRecords]));
       } catch (e) {}
 
-      // Allow smooth animation steps in CalculationLoader (min 1.6s for tactile realism)
+      // Persist active blueprint for the dedicated /blueprint page
+      localStorage.setItem("magic3_active_blueprint", JSON.stringify(calculatedResult));
+
+      // Allow smooth animation steps in CalculationLoader (1.8s for tactile celestial experience)
       await new Promise((resolve) => setTimeout(resolve, 1800));
 
-      setAnalysis(calculatedResult);
       setIsCalculating(false);
-      scrollToDashboard();
+      // Navigate to dedicated new blueprint page
+      router.push("/blueprint");
     } catch (err) {
       console.error("Calculation error:", err);
       const fallbackResult = performFullAnalysis(input);
-      setAnalysis(fallbackResult);
+      localStorage.setItem("magic3_active_blueprint", JSON.stringify(fallbackResult));
       setIsCalculating(false);
-      scrollToDashboard();
+      router.push("/blueprint");
     }
-  };
-
-  const scrollToDashboard = () => {
-    setTimeout(() => {
-      const el = document.getElementById("dashboard-section");
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
-      }
-    }, 150);
   };
 
   const scrollToCalculator = () => {
@@ -192,16 +184,7 @@ export default function Home() {
         isLoading={isCalculating}
       />
 
-      {/* Section 4: Live Cosmic Dashboard - THE 3 NUMBERS REVEALED 1ST, THEN EXPLAINED BELOW */}
-      <DashboardSection analysis={analysis} />
-
-      {/* Section 5: Personal Insights & Calendar */}
-      <InsightsCalendarSection synthesis={analysis.synthesis} />
-
-      {/* Section 6: Premium Synthesis Reports & Plans */}
-      <PremiumReportSection analysis={analysis} />
-
-      {/* Section 7: Minimal Editorial Footer */}
+      {/* Section 4: Minimal Editorial Footer */}
       <Footer />
     </main>
   );
