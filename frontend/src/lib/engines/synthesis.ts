@@ -36,21 +36,26 @@ export function generateSynthesisReport(
     (p) => p.number === numerology.lifePathNumber
   ) || planetaryLinks[0];
 
+  const safeSunSign = western?.sunSign || "Taurus";
+  const safeMoonSign = vedic?.moonSign || "Scorpio";
+  const safeMoonNakshatra = vedic?.moonNakshatra || "Anuradha";
+  const safeMoonPada = vedic?.moonPada || 1;
+
   // Triad components
   const cosmicTriad = {
     soulPurpose: {
       source: "Western Sun" as const,
       title: "Solar Radiance & Conscious Purpose",
-      sign: western.sunSign,
-      description: `Your core vitality operates through the lens of ${western.sunSign}. This defines your deliberate creative fire, conscious identity, and how you choose to project yourself into the world.`,
+      sign: safeSunSign,
+      description: `Your core vitality operates through the lens of ${safeSunSign}. This defines your deliberate creative fire, conscious identity, and how you choose to project yourself into the world.`,
     },
     innerMind: {
       source: "Vedic Moon & Nakshatra" as const,
       title: "Lunar Sanctuary & Karmic Subconscious",
-      sign: vedic.moonSign,
-      nakshatra: vedic.moonNakshatra,
-      pada: vedic.moonPada,
-      description: `In the sidereal zodiac, your Moon rests in ${vedic.moonSign} under the asterism of ${vedic.moonNakshatra} (Pada ${vedic.moonPada}). This governs your intuitive subconscious patterns, deep emotional memory, and instinctive perception.`,
+      sign: safeMoonSign,
+      nakshatra: safeMoonNakshatra,
+      pada: safeMoonPada,
+      description: `In the sidereal zodiac, your Moon rests in ${safeMoonSign} under the asterism of ${safeMoonNakshatra} (Pada ${safeMoonPada}). This governs your intuitive subconscious patterns, deep emotional memory, and instinctive perception.`,
     },
     destinyPath: {
       source: "Numerology Life Path" as const,
@@ -62,7 +67,7 @@ export function generateSynthesisReport(
     },
   };
 
-  const synthesisSummary = `Your cosmic blueprint is anchored by the creative drive of ${western.sunSign}, deepened by the instinctive wisdom of ${vedic.moonNakshatra} in ${vedic.moonSign}, and guided toward mastery via Life Path ${numerology.lifePathNumber}. Together, this energetic triad fosters ${primaryPlanetaryRuler.archetype.toLowerCase()} qualities across both your personal and creative endeavours.`;
+  const synthesisSummary = `Your cosmic blueprint is anchored by the creative drive of ${safeSunSign}, deepened by the instinctive wisdom of ${safeMoonNakshatra} in ${safeMoonSign}, and guided toward mastery via Life Path ${numerology.lifePathNumber}. Together, this energetic triad fosters ${primaryPlanetaryRuler.archetype.toLowerCase()} qualities across both your personal and creative endeavours.`;
 
   const derivedRationales = [
     `Life Path ${numerology.lifePathNumber} was derived through recursive Pythagorean reduction of ${input.birthDate}, preserving master vibrations.`,

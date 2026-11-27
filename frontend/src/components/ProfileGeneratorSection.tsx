@@ -239,7 +239,7 @@ export default function ProfileGeneratorSection({
                 <div className="pt-3 border-t border-[#5B3BD1]/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[11px] text-[#4A4568]">
                   <div className="flex items-center gap-1.5">
                     <ShieldCheck className="w-3.5 h-3.5 text-[#5B3BD1] flex-shrink-0" />
-                    <span>Saved securely to your account and administrative dashboard.</span>
+                    <span>Saved securely to your private member account.</span>
                   </div>
                   <div className="flex items-center gap-1 text-[#5B3BD1]">
                     <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" />

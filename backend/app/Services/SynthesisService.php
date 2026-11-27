@@ -27,21 +27,26 @@ class SynthesisService
         $dayPlanets = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
         $currentDayPlanet = $dayPlanets[$dayOfWeek] ?? 'Sun';
 
+        $sunSign = $western['sunSign'] ?? 'Taurus';
+        $moonSign = $vedic['moonSign'] ?? 'Scorpio';
+        $moonNakshatra = $vedic['moonNakshatra'] ?? 'Anuradha';
+        $moonPada = $vedic['moonPada'] ?? 1;
+
         return [
             'cosmicTriad' => [
                 'soulPurpose' => [
                     'source' => 'Western Sun',
                     'title' => 'Solar Radiance & Conscious Purpose',
-                    'sign' => $western['sunSign'],
-                    'description' => "Your conscious core operates through {$western['sunSign']}, expressing leadership and creative self-actualization.",
+                    'sign' => $sunSign,
+                    'description' => "Your conscious core operates through {$sunSign}, expressing leadership and creative self-actualization.",
                 ],
                 'innerMind' => [
                     'source' => 'Vedic Moon & Nakshatra',
                     'title' => 'Lunar Sanctuary & Karmic Subconscious',
-                    'sign' => $vedic['moonSign'],
-                    'nakshatra' => $vedic['moonNakshatra'],
-                    'pada' => $vedic['moonPada'],
-                    'description' => "In sidereal astronomy, your Moon resides in {$vedic['moonSign']} under the asterism {$vedic['moonNakshatra']} (Pada {$vedic['moonPada']}), governing your emotional rhythm.",
+                    'sign' => $moonSign,
+                    'nakshatra' => $moonNakshatra,
+                    'pada' => $moonPada,
+                    'description' => "In sidereal astronomy, your Moon resides in {$moonSign} under the asterism {$moonNakshatra} (Pada {$moonPada}), governing your emotional rhythm.",
                 ],
                 'destinyPath' => [
                     'source' => 'Numerology Life Path',
@@ -50,7 +55,7 @@ class SynthesisService
                     'description' => "Vibrating on Frequency {$lifePath}, governed by {$primary['planet']} ({$primary['sanskrit']}), directing your journey of personal mastery.",
                 ],
             ],
-            'synthesisSummary' => "Your cosmic architecture combines the purposeful fire of {$western['sunSign']}, the intuitive emotional depths of sidereal {$vedic['moonNakshatra']} in {$vedic['moonSign']}, and the systematic guidance of Life Path {$lifePath}.",
+            'synthesisSummary' => "Your cosmic architecture combines the purposeful fire of {$sunSign}, the intuitive emotional depths of sidereal {$moonNakshatra} in {$moonSign}, and the systematic guidance of Life Path {$lifePath}.",
             'derivedRationales' => [
                 "Life Path {$lifePath} derived via recursive Pythagorean reduction of birth date {$input['birth_date']}.",
                 "Vedic placements computed with Chitrapaksha/Lahiri Ayanamsa ({$vedic['ayanamsa']}°) in the Whole Sign house matrix.",

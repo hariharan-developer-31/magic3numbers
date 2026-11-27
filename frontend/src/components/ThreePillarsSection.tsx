@@ -1,9 +1,11 @@
 "use client";
 
-import React from "react";
-import { Moon, Sun, Orbit } from "lucide-react";
+import React, { useState } from "react";
+import { Moon, Sun, Orbit, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function ThreePillarsSection() {
+  const [activeMobileCard, setActiveMobileCard] = useState(0);
+
   const pillars = [
     {
       num: "01",
@@ -49,6 +51,15 @@ export default function ThreePillarsSection() {
     },
   ];
 
+  const handleMobileScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const cardWidth = el.scrollWidth / pillars.length;
+    const index = Math.round(el.scrollLeft / cardWidth);
+    if (index >= 0 && index < pillars.length) {
+      setActiveMobileCard(index);
+    }
+  };
+
   return (
     <section
       id="three-pillars"
@@ -58,9 +69,9 @@ export default function ThreePillarsSection() {
       {/* Background ambient lighting */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 sm:w-[600px] h-80 sm:h-[600px] bg-[#5B3BD1] opacity-30 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="content-container relative z-10">
+      <div className="content-container relative z-10 w-full">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 md:mb-20">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-14 md:mb-18">
           <div className="max-w-2xl">
             <span className="editorial-caption text-[#CFC6F6]">The Methodological Foundation</span>
             <h2 className="section-headline text-white mt-3 uppercase tracking-tight">
@@ -77,14 +88,27 @@ export default function ThreePillarsSection() {
           </div>
         </div>
 
-        {/* Pillars Grid - 1 col on mobile, 3 cols on tablet & desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-stretch">
+        {/* Mobile Swipe Instructions & Counter */}
+        <div className="flex md:hidden items-center justify-between text-xs text-[#CFC6F6]/80 mb-3 px-1">
+          <span className="font-semibold uppercase tracking-wider text-[10px]">
+            Discipline {activeMobileCard + 1} of 3
+          </span>
+          <span className="text-[11px] flex items-center gap-1 font-medium text-[#CFC6F6] animate-pulse">
+            Swipe cards &rarr;
+          </span>
+        </div>
+
+        {/* Swipeable Container on Mobile, 3-column Grid on Desktop */}
+        <div
+          onScroll={handleMobileScroll}
+          className="flex md:grid md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory pb-4 md:pb-0 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0"
+        >
           {pillars.map((pillar) => {
             const Icon = pillar.icon;
             return (
               <div
                 key={pillar.num}
-                className="group relative flex flex-col justify-between p-6 sm:p-8 lg:p-10 rounded-[28px] bg-[#0D0B1A]/45 border border-[#CFC6F6]/15 backdrop-blur-md transition-all duration-300 ease-editorial hover:border-[#CFC6F6]/40 hover:-translate-y-1.5 shadow-xl"
+                className="w-[84vw] max-w-[340px] sm:w-[380px] md:w-auto flex-shrink-0 snap-center group relative flex flex-col justify-between p-6 sm:p-8 lg:p-10 rounded-[28px] bg-[#0D0B1A]/55 border border-[#CFC6F6]/20 backdrop-blur-md transition-all duration-300 ease-editorial hover:border-[#CFC6F6]/40 hover:-translate-y-1.5 shadow-xl"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">
@@ -120,6 +144,18 @@ export default function ThreePillarsSection() {
               </div>
             );
           })}
+        </div>
+
+        {/* Mobile Swipe Indicators (Active Dot Tracking) */}
+        <div className="flex md:hidden items-center justify-center gap-2 mt-4">
+          {pillars.map((_, idx) => (
+            <span
+              key={idx}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                activeMobileCard === idx ? "w-6 bg-[#CFC6F6]" : "w-1.5 bg-[#CFC6F6]/30"
+              }`}
+            />
+          ))}
         </div>
       </div>
     </section>

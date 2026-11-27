@@ -14,9 +14,12 @@ import {
   Layers,
   Calendar as CalendarIcon,
   HelpCircle,
+  ArrowDown,
+  Link2,
 } from "lucide-react";
 
 export default function DashboardSection({ analysis }: { analysis: FullCosmicAnalysis }) {
+  const [activeNumberCard, setActiveNumberCard] = useState<number>(0);
   const [selectedPlanetaryNum, setSelectedPlanetaryNum] = useState<number>(
     analysis.numerology.lifePathNumber
   );
@@ -25,6 +28,22 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
   >("overview");
 
   const { numerology, vedic, western, synthesis, input } = analysis;
+
+  const sunSign = western?.sunSign || "Taurus";
+  const risingSign = western?.risingSign || "Aries";
+  const moonSign = vedic?.moonSign || "Scorpio";
+  const moonNakshatra = vedic?.moonNakshatra || "Anuradha";
+  const moonPada = vedic?.moonPada || 1;
+  const ascendantSign = vedic?.ascendantSign || "Sagittarius";
+
+  const handleNumberScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const cardWidth = el.scrollWidth / 3;
+    const index = Math.round(el.scrollLeft / cardWidth);
+    if (index >= 0 && index < 3) {
+      setActiveNumberCard(index);
+    }
+  };
 
   const currentPlanetaryDetail =
     synthesis.planetaryNumberLinks.find((p) => p.number === selectedPlanetaryNum) ||
@@ -115,10 +134,23 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
             </div>
           </div>
 
-          {/* The 3 Cards - Grid: 1 col on mobile, 3 cols on tablet/desktop */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
+          {/* Mobile Swipe Instructions & Counter */}
+          <div className="flex md:hidden items-center justify-between text-xs text-[#4A4568] mb-3 px-1">
+            <span className="font-semibold uppercase tracking-wider text-[10px]">
+              Sacred Number {activeNumberCard + 1} of 3
+            </span>
+            <span className="text-[11px] flex items-center gap-1 font-semibold text-[#5B3BD1] animate-pulse">
+              Swipe cards &rarr;
+            </span>
+          </div>
+
+          {/* The 3 Cards - Swipeable on mobile, 3 cols on tablet/desktop */}
+          <div
+            onScroll={handleNumberScroll}
+            className="flex md:grid md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory pb-4 md:pb-0 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0"
+          >
             {/* Number 1: Life Path Number Card */}
-            <div className="relative p-6 sm:p-8 rounded-[28px] bg-white/90 border border-white shadow-xl shadow-[#5B3BD1]/5 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1">
+            <div className="w-[84vw] max-w-[340px] sm:w-[380px] md:w-auto flex-shrink-0 snap-center relative p-6 sm:p-8 rounded-[28px] bg-white/90 border border-white shadow-xl shadow-[#5B3BD1]/5 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1">
               <div>
                 <div className="flex items-center justify-between mb-5">
                   <span className="text-3xl sm:text-4xl font-extrabold text-[#5B3BD1]/30">01</span>
@@ -145,18 +177,18 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
                 </span>
 
                 <div className="mt-4 p-3 rounded-xl bg-[#E7E3FB]/50 border border-[#5B3BD1]/15 text-xs text-[#0D0B1A] font-medium">
-                  Western Sun in {western.sunSign} &bull; Solar Conscious Drive
+                  Western Sun in {sunSign} &bull; Solar Conscious Drive
                 </div>
               </div>
 
               <div className="mt-6 pt-4 border-t border-[#5B3BD1]/10 text-xs text-[#4A4568] flex items-center justify-between">
                 <span>Solar Rising:</span>
-                <span className="font-bold text-[#0D0B1A]">{western.risingSign}</span>
+                <span className="font-bold text-[#0D0B1A]">{risingSign}</span>
               </div>
             </div>
 
             {/* Number 2: Birthday Vibration Card */}
-            <div className="relative p-6 sm:p-8 rounded-[28px] bg-[#3A1F8C] text-white border border-[#CFC6F6]/30 shadow-2xl flex flex-col justify-between overflow-hidden transition-all duration-300 hover:-translate-y-1">
+            <div className="w-[84vw] max-w-[340px] sm:w-[380px] md:w-auto flex-shrink-0 snap-center relative p-6 sm:p-8 rounded-[28px] bg-[#3A1F8C] text-white border border-[#CFC6F6]/30 shadow-2xl flex flex-col justify-between overflow-hidden transition-all duration-300 hover:-translate-y-1">
               <div className="absolute top-0 right-0 w-36 h-36 bg-[#5B3BD1] opacity-50 rounded-full blur-2xl pointer-events-none" />
 
               <div className="relative z-10">
@@ -180,18 +212,18 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
                 </span>
 
                 <div className="mt-4 p-3 rounded-xl bg-[#5B3BD1]/40 border border-[#CFC6F6]/20 text-xs text-white/95 font-medium">
-                  Sidereal Moon in {vedic.moonSign} &bull; {vedic.moonNakshatra} (Pada {vedic.moonPada})
+                  Sidereal Moon in {moonSign} &bull; {moonNakshatra} (Pada {moonPada})
                 </div>
               </div>
 
               <div className="mt-6 pt-4 border-t border-[#CFC6F6]/20 text-xs text-[#CFC6F6]/80 flex items-center justify-between relative z-10">
                 <span>Vedic Lagna:</span>
-                <span className="font-bold text-white">{vedic.ascendantSign}</span>
+                <span className="font-bold text-white">{ascendantSign}</span>
               </div>
             </div>
 
             {/* Number 3: Expression Number Card */}
-            <div className="relative p-6 sm:p-8 rounded-[28px] bg-white/90 border border-white shadow-xl shadow-[#5B3BD1]/5 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1">
+            <div className="w-[84vw] max-w-[340px] sm:w-[380px] md:w-auto flex-shrink-0 snap-center relative p-6 sm:p-8 rounded-[28px] bg-white/90 border border-white shadow-xl shadow-[#5B3BD1]/5 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1">
               <div>
                 <div className="flex items-center justify-between mb-5">
                   <span className="text-3xl sm:text-4xl font-extrabold text-[#5B3BD1]/30">03</span>
@@ -229,63 +261,158 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
             </div>
           </div>
 
+          {/* Mobile Swipe Indicators for 3 Numbers */}
+          <div className="flex md:hidden items-center justify-center gap-2 mt-4 mb-2">
+            {[0, 1, 2].map((idx) => (
+              <span
+                key={idx}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  activeNumberCard === idx ? "w-6 bg-[#5B3BD1]" : "w-1.5 bg-[#5B3BD1]/25"
+                }`}
+              />
+            ))}
+          </div>
+
           {/* =========================================================================
-              REQUIREMENT: THEN EXPLAIN THAT 3 BELOW
+              REQUIREMENT: STEP-BY-STEP CONNECTED FLOW (ONE BY ONE LINKED TOGETHER)
               ========================================================================= */}
-          <div className="mt-8 p-6 sm:p-10 rounded-[32px] bg-white/80 backdrop-blur-md border border-white shadow-md">
-            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#5B3BD1]/15">
-              <div className="w-9 h-9 rounded-xl bg-[#5B3BD1] text-white flex items-center justify-center">
+          <div className="mt-12 sm:mt-16 p-6 sm:p-10 md:p-12 rounded-[32px] sm:rounded-[40px] bg-white/90 backdrop-blur-md border border-white shadow-xl shadow-[#5B3BD1]/5">
+            {/* Header */}
+            <div className="flex items-center gap-3.5 mb-8 sm:mb-12 pb-5 border-b border-[#5B3BD1]/15">
+              <div className="w-10 h-10 rounded-2xl bg-[#5B3BD1] text-white flex items-center justify-center shadow-md shadow-[#5B3BD1]/20">
                 <Layers className="w-5 h-5" />
               </div>
               <div>
-                <span className="editorial-caption text-[#5B3BD1]">Triad Synthesis &bull; Meaning &amp; Dynamics</span>
-                <h4 className="text-lg sm:text-xl font-bold text-[#0D0B1A]">
-                  How Your 3 Sacred Numbers Interlock ({numerology.lifePathNumber} &bull; {numerology.birthdayNumber} &bull; {numerology.expressionNumber})
+                <span className="editorial-caption text-[#5B3BD1]">Sequential Cosmic Circuit</span>
+                <h4 className="text-lg sm:text-2xl font-extrabold uppercase tracking-tight text-[#0D0B1A]">
+                  How Your 3 Sacred Numbers Flow &bull; Connected Blueprint
                 </h4>
               </div>
             </div>
 
-            {/* Triad Explanation Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-xs sm:text-sm text-[#4A4568] leading-relaxed">
-              <div className="p-5 rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/10">
-                <span className="font-bold text-[#0D0B1A] block text-sm mb-1.5 flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#5B3BD1]" />
-                  1. Life Path (Number {numerology.lifePathNumber})
-                </span>
-                <p>
-                  Governs your overarching destiny trajectory and purpose in this lifetime. Through Western Sun in {western.sunSign}, you are called to embody {numerology.descriptions.lifePath}
-                </p>
+            {/* Vertical Connected Timeline Flow */}
+            <div className="relative pl-6 sm:pl-10 space-y-8 sm:space-y-10 before:absolute before:left-3 sm:before:left-4 before:top-4 before:bottom-6 before:w-0.5 before:bg-gradient-to-b before:from-[#5B3BD1] before:via-[#3A1F8C] before:to-[#5B3BD1]">
+              {/* Node 1: Life Path */}
+              <div className="relative group transition-all duration-300 ease-editorial hover:translate-x-1">
+                {/* Flow Node Pin */}
+                <div className="absolute -left-6 sm:-left-10 top-1 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#5B3BD1] text-white flex items-center justify-center text-[10px] sm:text-xs font-extrabold shadow-md shadow-[#5B3BD1]/30 border-2 border-white">
+                  01
+                </div>
+
+                <div className="p-5 sm:p-7 rounded-2xl sm:rounded-3xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/15 shadow-xs">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                    <span className="text-xs uppercase font-extrabold tracking-wider text-[#5B3BD1]">
+                      Step 1: The Prime Direction
+                    </span>
+                    <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-white text-[#5B3BD1] font-bold border border-[#5B3BD1]/20">
+                      Western Sun in {sunSign}
+                    </span>
+                  </div>
+                  <h5 className="text-base sm:text-lg font-bold text-[#0D0B1A] mb-2">
+                    Life Path Vibration (Number {numerology.lifePathNumber})
+                  </h5>
+                  <p className="text-xs sm:text-sm text-[#4A4568] leading-relaxed">
+                    Governs your overarching destiny trajectory, spiritual will, and conscious life mission. Operating through the lens of {sunSign}, you are configured to embody: {numerology.descriptions.lifePath}
+                  </p>
+                </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/10">
-                <span className="font-bold text-[#0D0B1A] block text-sm mb-1.5 flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#3A1F8C]" />
-                  2. Birthday Vibration (Number {numerology.birthdayNumber})
+              {/* Connector Link 1 -> 2 */}
+              <div className="relative -my-3 sm:-my-4 flex items-center gap-2 text-[11px] font-semibold text-[#5B3BD1] pl-2">
+                <div className="w-5 h-5 rounded-full bg-white border border-[#5B3BD1]/30 flex items-center justify-center text-[#5B3BD1] shadow-xs">
+                  <ArrowDown className="w-3 h-3" />
+                </div>
+                <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-[#4A4568] bg-white/80 px-2 py-0.5 rounded-md border border-[#5B3BD1]/10">
+                  Infuses conscious willpower into instinctive subconscious sanctuary
                 </span>
-                <p>
-                  Represents your innate natural strengths and instinctive emotional sanctuary. Aligned with your Vedic Moon in {vedic.moonSign} ({vedic.moonNakshatra}), it provides {numerology.descriptions.birthday}
-                </p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/10">
-                <span className="font-bold text-[#0D0B1A] block text-sm mb-1.5 flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#5B3BD1]" />
-                  3. Expression Calling (Number {numerology.expressionNumber})
-                </span>
-                <p>
-                  Calculated from your full birth name matrix, governing your outer potential and social manifestation. It channels {numerology.descriptions.expression}
-                </p>
-              </div>
-            </div>
+              {/* Node 2: Birthday Vibration */}
+              <div className="relative group transition-all duration-300 ease-editorial hover:translate-x-1">
+                {/* Flow Node Pin */}
+                <div className="absolute -left-6 sm:-left-10 top-1 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#3A1F8C] text-white flex items-center justify-center text-[10px] sm:text-xs font-extrabold shadow-md shadow-[#3A1F8C]/30 border-2 border-white">
+                  02
+                </div>
 
-            {/* Overarching Harmonization Summary */}
-            <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-[#E7E3FB] to-white border border-[#5B3BD1]/20">
-              <span className="text-[11px] uppercase tracking-wider font-bold text-[#5B3BD1] block mb-1">
-                The Harmonized Synthesis of Your 3 Numbers
-              </span>
-              <p className="text-xs sm:text-sm text-[#0D0B1A] font-medium leading-relaxed">
-                Your sacred numeric triad — <strong>{numerology.lifePathNumber}</strong> (Life Path), <strong>{numerology.birthdayNumber}</strong> (Birthday), and <strong>{numerology.expressionNumber}</strong> (Expression) — forms a complete vibrational circuit. Together with your {western.sunSign} Sun, {vedic.moonSign} Moon, and {vedic.ascendantSign} Lagna, they direct your conscious drive, subconscious intuition, and outward legacy.
-              </p>
+                <div className="p-5 sm:p-7 rounded-2xl sm:rounded-3xl bg-[#3A1F8C]/5 border border-[#3A1F8C]/15 shadow-xs">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                    <span className="text-xs uppercase font-extrabold tracking-wider text-[#3A1F8C]">
+                      Step 2: The Innate Core
+                    </span>
+                    <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-white text-[#3A1F8C] font-bold border border-[#3A1F8C]/20">
+                      Sidereal Moon in {moonSign} &bull; {moonNakshatra}
+                    </span>
+                  </div>
+                  <h5 className="text-base sm:text-lg font-bold text-[#0D0B1A] mb-2">
+                    Birthday Vibration (Number {numerology.birthdayNumber})
+                  </h5>
+                  <p className="text-xs sm:text-sm text-[#4A4568] leading-relaxed">
+                    Represents your instinctive talents, emotional sanctuary, and unlearned gifts. Anchored in the sidereal asterism of {moonNakshatra} (Pada {moonPada}), it supplies: {numerology.descriptions.birthday}
+                  </p>
+                </div>
+              </div>
+
+              {/* Connector Link 2 -> 3 */}
+              <div className="relative -my-3 sm:-my-4 flex items-center gap-2 text-[11px] font-semibold text-[#5B3BD1] pl-2">
+                <div className="w-5 h-5 rounded-full bg-white border border-[#5B3BD1]/30 flex items-center justify-center text-[#5B3BD1] shadow-xs">
+                  <ArrowDown className="w-3 h-3" />
+                </div>
+                <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-[#4A4568] bg-white/80 px-2 py-0.5 rounded-md border border-[#5B3BD1]/10">
+                  Projects inner subconscious instincts outward into the worldly calling
+                </span>
+              </div>
+
+              {/* Node 3: Expression Calling */}
+              <div className="relative group transition-all duration-300 ease-editorial hover:translate-x-1">
+                {/* Flow Node Pin */}
+                <div className="absolute -left-6 sm:-left-10 top-1 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#5B3BD1] text-white flex items-center justify-center text-[10px] sm:text-xs font-extrabold shadow-md shadow-[#5B3BD1]/30 border-2 border-white">
+                  03
+                </div>
+
+                <div className="p-5 sm:p-7 rounded-2xl sm:rounded-3xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/15 shadow-xs">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                    <span className="text-xs uppercase font-extrabold tracking-wider text-[#5B3BD1]">
+                      Step 3: The Outward Impact
+                    </span>
+                    <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-white text-[#5B3BD1] font-bold border border-[#5B3BD1]/20">
+                      Ascendant Lagna in {ascendantSign}
+                    </span>
+                  </div>
+                  <h5 className="text-base sm:text-lg font-bold text-[#0D0B1A] mb-2">
+                    Expression Number (Number {numerology.expressionNumber})
+                  </h5>
+                  <p className="text-xs sm:text-sm text-[#4A4568] leading-relaxed">
+                    Derived from your full birth name matrix, determining how your inner talents are manifested in your career, relationships, and legacy: {numerology.descriptions.expression}
+                  </p>
+                </div>
+              </div>
+
+              {/* Connector Link 3 -> 4 */}
+              <div className="relative -my-3 sm:-my-4 flex items-center gap-2 text-[11px] font-semibold text-[#5B3BD1] pl-2">
+                <div className="w-5 h-5 rounded-full bg-white border border-[#5B3BD1]/30 flex items-center justify-center text-[#5B3BD1] shadow-xs">
+                  <ArrowDown className="w-3 h-3" />
+                </div>
+                <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-[#4A4568] bg-white/80 px-2 py-0.5 rounded-md border border-[#5B3BD1]/10">
+                  Completes the closed vibrational circuit into your personal blueprint
+                </span>
+              </div>
+
+              {/* Node 4: Integrated Synthesis Outcome */}
+              <div className="relative group transition-all duration-300 ease-editorial hover:translate-x-1">
+                {/* Flow Node Pin */}
+                <div className="absolute -left-6 sm:-left-10 top-1 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-[#5B3BD1] to-[#3A1F8C] text-white flex items-center justify-center text-[10px] sm:text-xs font-extrabold shadow-md shadow-[#5B3BD1]/40 border-2 border-white">
+                  ✓
+                </div>
+
+                <div className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#3A1F8C] to-[#16122C] text-white border border-[#CFC6F6]/30 shadow-xl">
+                  <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-extrabold text-[#CFC6F6] block mb-2">
+                    Integrated Synthesis &bull; The Complete 3-Number Circuit
+                  </span>
+                  <p className="text-xs sm:text-sm text-[#E4E0FA] font-normal leading-relaxed">
+                    Your three sacred numbers — <strong>{numerology.lifePathNumber}</strong> (Life Path), <strong>{numerology.birthdayNumber}</strong> (Birthday), and <strong>{numerology.expressionNumber}</strong> (Expression) — lock together like gear teeth. In tandem with your Tropical {sunSign} Sun, Sidereal {moonSign} ({moonNakshatra}) Moon, and {ascendantSign} Lagna, they form a harmonious compass for all decision-making, creative focus, and personal evolution.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Sparkles, Menu, X } from "lucide-react";
+import { Sparkles, Menu, X, ArrowRight } from "lucide-react";
 import BrandLogo from "./BrandLogo";
 
 export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?: () => void }) {
@@ -48,10 +48,12 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
 
   const scrollTo = (id: string) => {
     setMobileMenuOpen(false);
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
+    setTimeout(() => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 80);
   };
 
   const textColorClass = isDarkSection ? "text-white" : "text-[#0D0B1A]";
@@ -62,12 +64,12 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
     : "bg-transparent";
 
   return (
-    <header className="contents">
+    <>
       <nav
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ease-editorial ${navBgClass}`}
       >
         <div className="content-container flex items-center justify-between h-16 sm:h-20 md:h-24">
-          {/* Brand Logo with New Golden Celestial Star Emblem */}
+          {/* Brand Logo with Golden Celestial Star Emblem */}
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             className="focus:outline-none"
@@ -109,7 +111,7 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
             </button>
           </div>
 
-          {/* Right-aligned Primary CTA Button */}
+          {/* Right-aligned Primary CTA Button (Tablet & Desktop) */}
           <div className="hidden sm:flex items-center gap-4">
             <button
               onClick={() => {
@@ -125,65 +127,88 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
 
           {/* Mobile Hamburger Button */}
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => setMobileMenuOpen(true)}
             className={`lg:hidden p-2 rounded-xl transition-colors ${textColorClass} focus:outline-none`}
-            aria-label="Toggle navigation menu"
+            aria-label="Open navigation menu"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <Menu className="w-6 h-6" />
           </button>
         </div>
-
-        {/* Mobile Full-Screen Overlay Drawer */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden fixed inset-x-0 top-16 sm:top-20 bottom-0 bg-[#0D0B1A]/95 backdrop-blur-2xl text-white px-6 py-8 flex flex-col justify-between shadow-2xl animate-fade-in z-50 overflow-y-auto">
-            <div className="flex flex-col gap-6 text-lg font-medium">
-              <button
-                onClick={() => scrollTo("three-pillars")}
-                className="text-left py-2 hover:text-[#CFC6F6] border-b border-white/10"
-              >
-                The Three Pillars
-              </button>
-              <button
-                onClick={() => scrollTo("profile-generator")}
-                className="text-left py-2 hover:text-[#CFC6F6] border-b border-white/10"
-              >
-                Calculate Blueprint
-              </button>
-              <button
-                onClick={() => scrollTo("dashboard-section")}
-                className="text-left py-2 hover:text-[#CFC6F6] border-b border-white/10 text-[#CFC6F6] font-bold"
-              >
-                Your 3 Numbers
-              </button>
-              <button
-                onClick={() => scrollTo("insights-calendar")}
-                className="text-left py-2 hover:text-[#CFC6F6] border-b border-white/10"
-              >
-                Personal Calendar
-              </button>
-              <button
-                onClick={() => scrollTo("premium-reports")}
-                className="text-left py-2 hover:text-[#CFC6F6] border-b border-white/10"
-              >
-                Reports &amp; Dossiers
-              </button>
-            </div>
-
-            <div className="pt-6">
-              <button
-                onClick={() => scrollTo("profile-generator")}
-                className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-[#5B3BD1] text-white text-sm font-semibold tracking-wider uppercase shadow-xl shadow-[#5B3BD1]/30 active:scale-98"
-              >
-                <Sparkles className="w-4 h-4 text-[#CFC6F6]" />
-                <span>Calculate Your Numbers Now</span>
-              </button>
-              <p className="text-center text-[11px] text-[#CFC6F6]/60 mt-4">
-                Vedic Sidereal &bull; Western Tropical &bull; Pythagorean
-              </p>
-            </div>
-          </div>
-        )}
       </nav>
-    </header>
+
+      {/* Full-Screen Mobile Navigation Overlay (Pristine, Zero Clipping) */}
+      {mobileMenuOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="lg:hidden fixed inset-0 z-50 bg-[#0D0B1A] text-white flex flex-col justify-between p-6 sm:p-8 animate-fade-in"
+        >
+          {/* Top Bar with Brand Logo and Close Button */}
+          <div className="flex items-center justify-between pb-6 border-b border-white/10">
+            <BrandLogo textColor="text-white" />
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2.5 rounded-xl bg-white/10 text-white hover:bg-white/20 transition-colors focus:outline-none"
+              aria-label="Close navigation menu"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Navigation Links with Arrow Indicators */}
+          <div className="flex flex-col gap-4 py-8 overflow-y-auto">
+            <button
+              onClick={() => scrollTo("three-pillars")}
+              className="flex items-center justify-between text-left py-3 px-4 rounded-2xl hover:bg-white/5 border border-white/10 text-base font-semibold transition-colors"
+            >
+              <span>The Three Pillars</span>
+              <ArrowRight className="w-4 h-4 text-[#CFC6F6]" />
+            </button>
+            <button
+              onClick={() => scrollTo("profile-generator")}
+              className="flex items-center justify-between text-left py-3 px-4 rounded-2xl hover:bg-white/5 border border-white/10 text-base font-semibold transition-colors"
+            >
+              <span>Calculate Blueprint</span>
+              <ArrowRight className="w-4 h-4 text-[#CFC6F6]" />
+            </button>
+            <button
+              onClick={() => scrollTo("dashboard-section")}
+              className="flex items-center justify-between text-left py-3 px-4 rounded-2xl bg-[#5B3BD1]/20 border border-[#5B3BD1]/40 text-base font-bold text-[#CFC6F6] transition-colors"
+            >
+              <span>Your 3 Numbers</span>
+              <ArrowRight className="w-4 h-4 text-[#CFC6F6]" />
+            </button>
+            <button
+              onClick={() => scrollTo("insights-calendar")}
+              className="flex items-center justify-between text-left py-3 px-4 rounded-2xl hover:bg-white/5 border border-white/10 text-base font-semibold transition-colors"
+            >
+              <span>Personal Calendar</span>
+              <ArrowRight className="w-4 h-4 text-[#CFC6F6]" />
+            </button>
+            <button
+              onClick={() => scrollTo("premium-reports")}
+              className="flex items-center justify-between text-left py-3 px-4 rounded-2xl hover:bg-white/5 border border-white/10 text-base font-semibold transition-colors"
+            >
+              <span>Reports &amp; Dossiers</span>
+              <ArrowRight className="w-4 h-4 text-[#CFC6F6]" />
+            </button>
+          </div>
+
+          {/* Bottom Action Section */}
+          <div className="pt-4 border-t border-white/10">
+            <button
+              onClick={() => scrollTo("profile-generator")}
+              className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-[#5B3BD1] text-white text-sm font-semibold tracking-wider uppercase shadow-xl shadow-[#5B3BD1]/40 active:scale-98"
+            >
+              <Sparkles className="w-4 h-4 text-[#CFC6F6]" />
+              <span>Calculate Your Numbers Now</span>
+            </button>
+            <p className="text-center text-[11px] text-[#CFC6F6]/60 mt-3">
+              Sidereal Vedic &bull; Tropical Western &bull; Pythagorean Matrix
+            </p>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
