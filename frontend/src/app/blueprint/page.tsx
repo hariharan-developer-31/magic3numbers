@@ -74,14 +74,14 @@ export default function BlueprintPage() {
           ========================================================================= */}
       <header className="sticky top-0 z-40 w-full bg-[#E7E3FB]/90 backdrop-blur-md border-b border-[#5B3BD1]/10 shadow-xs">
         <div className="content-container flex items-center justify-between h-16 sm:h-20 gap-2">
-          {/* Back to Website Button */}
+          {/* Back to Website Button - Only Icon, No Border/Background */}
           <Link
             href="/"
-            className="group inline-flex items-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-full bg-white text-[#0D0B1A] border border-[#5B3BD1]/20 hover:border-[#5B3BD1] hover:bg-[#5B3BD1] hover:text-white transition-all text-xs sm:text-sm font-semibold shadow-xs flex-shrink-0"
+            aria-label="Back to Website"
+            title="Back to Website"
+            className="group p-2 sm:p-2.5 -ml-1 sm:-ml-2 rounded-full text-[#5B3BD1] hover:text-[#3A1F8C] hover:bg-[#5B3BD1]/10 transition-all flex items-center justify-center flex-shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B3BD1]"
           >
-            <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#5B3BD1] group-hover:text-white group-hover:-translate-x-1 transition-transform" />
-            <span className="hidden sm:inline">Back to Website</span>
-            <span className="inline sm:hidden">Back</span>
+            <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:-translate-x-1" />
           </Link>
 
           {/* Centered Brand Logo */}
