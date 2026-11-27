@@ -118,22 +118,22 @@ export default function AuthGate({
         </p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex p-1 rounded-2xl bg-[#E7E3FB]/50 border border-[#5B3BD1]/15 mb-6">
+      {/* Segmented Control Tabs */}
+      <div className="grid grid-cols-2 p-1.5 rounded-full bg-[#E7E3FB]/70 border border-[#5B3BD1]/20 mb-6 gap-1.5 overflow-hidden shadow-inner">
         <button
           type="button"
           onClick={() => {
             setTab("register");
             setError(null);
           }}
-          className={`flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+          className={`w-full py-2.5 sm:py-3 px-3 rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all duration-300 ease-editorial flex items-center justify-center gap-2 focus:outline-none focus:ring-0 active:outline-none select-none cursor-pointer ${
             tab === "register"
-              ? "bg-[#5B3BD1] text-white shadow-md shadow-[#5B3BD1]/30"
-              : "text-[#4A4568] hover:text-[#0D0B1A]"
+              ? "bg-[#5B3BD1] text-white shadow-md shadow-[#5B3BD1]/30 font-bold"
+              : "text-[#4A4568] hover:text-[#0D0B1A] hover:bg-white/40 font-medium"
           }`}
         >
-          <UserPlus className="w-4 h-4" />
-          <span>Create Account</span>
+          <UserPlus className="w-4 h-4 flex-shrink-0" />
+          <span className="truncate">Create Account</span>
         </button>
         <button
           type="button"
@@ -141,14 +141,14 @@ export default function AuthGate({
             setTab("login");
             setError(null);
           }}
-          className={`flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+          className={`w-full py-2.5 sm:py-3 px-3 rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all duration-300 ease-editorial flex items-center justify-center gap-2 focus:outline-none focus:ring-0 active:outline-none select-none cursor-pointer ${
             tab === "login"
-              ? "bg-[#5B3BD1] text-white shadow-md shadow-[#5B3BD1]/30"
-              : "text-[#4A4568] hover:text-[#0D0B1A]"
+              ? "bg-[#5B3BD1] text-white shadow-md shadow-[#5B3BD1]/30 font-bold"
+              : "text-[#4A4568] hover:text-[#0D0B1A] hover:bg-white/40 font-medium"
           }`}
         >
-          <LogIn className="w-4 h-4" />
-          <span>Sign In</span>
+          <LogIn className="w-4 h-4 flex-shrink-0" />
+          <span className="truncate">Sign In</span>
         </button>
       </div>
 
@@ -171,7 +171,7 @@ export default function AuthGate({
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Alexander Vance"
+              placeholder="e.g. Maya Lin, Alexander, Hari..."
               className="w-full px-4 py-3 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] placeholder-[#4A4568]/50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-sm font-medium transition-all"
             />
           </div>
