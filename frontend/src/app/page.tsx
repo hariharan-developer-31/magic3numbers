@@ -119,6 +119,12 @@ export default function Home() {
           nakshatra: calculatedResult.vedic.moonNakshatra,
           pada: calculatedResult.vedic.moonPada,
           life_path_number: calculatedResult.numerology.lifePathNumber,
+          birthday_number: calculatedResult.numerology.birthdayNumber,
+          expression_number: calculatedResult.numerology.expressionNumber,
+          number_1: calculatedResult.numerology.lifePathNumber,
+          number_2: calculatedResult.numerology.birthdayNumber,
+          number_3: calculatedResult.numerology.expressionNumber,
+          formatted_numbers: `${calculatedResult.numerology.lifePathNumber} • ${calculatedResult.numerology.birthdayNumber} • ${calculatedResult.numerology.expressionNumber}`,
           is_master_number: calculatedResult.numerology.isMasterLifePath,
           created_at: new Date().toISOString(),
         };

@@ -53,24 +53,71 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
         </div>
 
         {/* =========================================================================
-            REQUIREMENT: SHOW THE 3 NUMBERS 1ST
+            REQUIREMENT: SHOW THE 3 NUMBERS 1ST PROMINENTLY
             ========================================================================= */}
         <div className="mb-14 sm:mb-20">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <span className="editorial-caption text-[#5B3BD1]">The Sacred Triad</span>
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-tight text-[#0D0B1A] mt-1">
-                Your 3 Sacred Numbers
-              </h3>
+          <div className="text-center mb-8">
+            <span className="editorial-caption text-[#5B3BD1]">The Sacred Triad</span>
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold uppercase tracking-tight text-[#0D0B1A] mt-1">
+              Your 3 Sacred Numbers
+            </h3>
+            <p className="mt-2 text-xs sm:text-sm text-[#4A4568] max-w-lg mx-auto">
+              Synthesized deterministically from your date of birth, birth day vibration, and full birth name matrix.
+            </p>
+
+            {/* Prominent 3 Numbers Top Display */}
+            <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-4 sm:gap-8 p-5 sm:p-8 rounded-[32px] sm:rounded-[40px] bg-white border border-[#5B3BD1]/20 shadow-2xl shadow-[#5B3BD1]/15">
+              {/* Number 1: Life Path */}
+              <div className="flex flex-col items-center">
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#5B3BD1] mb-1.5">
+                  1st Number
+                </span>
+                <div className="w-16 h-16 sm:w-22 sm:h-22 rounded-2xl sm:rounded-3xl bg-[#5B3BD1] text-white flex items-center justify-center text-3xl sm:text-4xl font-extrabold shadow-lg shadow-[#5B3BD1]/30">
+                  {numerology.lifePathNumber}
+                </div>
+                <span className="text-xs sm:text-sm font-bold text-[#0D0B1A] mt-2">
+                  Life Path
+                </span>
+                <span className="text-[10px] text-[#4A4568]">Solar Purpose</span>
+              </div>
+
+              <span className="hidden sm:inline-block text-3xl font-extrabold text-[#5B3BD1]/30">•</span>
+
+              {/* Number 2: Birthday */}
+              <div className="flex flex-col items-center">
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#3A1F8C] mb-1.5">
+                  2nd Number
+                </span>
+                <div className="w-16 h-16 sm:w-22 sm:h-22 rounded-2xl sm:rounded-3xl bg-[#3A1F8C] text-white flex items-center justify-center text-3xl sm:text-4xl font-extrabold shadow-lg shadow-[#3A1F8C]/30 border-2 border-[#CFC6F6]/40">
+                  {numerology.birthdayNumber}
+                </div>
+                <span className="text-xs sm:text-sm font-bold text-[#0D0B1A] mt-2">
+                  Birthday
+                </span>
+                <span className="text-[10px] text-[#4A4568]">Lunar Asterism</span>
+              </div>
+
+              <span className="hidden sm:inline-block text-3xl font-extrabold text-[#5B3BD1]/30">•</span>
+
+              {/* Number 3: Expression */}
+              <div className="flex flex-col items-center">
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#5B3BD1] mb-1.5">
+                  3rd Number
+                </span>
+                <div className="w-16 h-16 sm:w-22 sm:h-22 rounded-2xl sm:rounded-3xl bg-[#5B3BD1] text-white flex items-center justify-center text-3xl sm:text-4xl font-extrabold shadow-lg shadow-[#5B3BD1]/30">
+                  {numerology.expressionNumber}
+                </div>
+                <span className="text-xs sm:text-sm font-bold text-[#0D0B1A] mt-2">
+                  Expression
+                </span>
+                <span className="text-[10px] text-[#4A4568]">Soul Calling</span>
+              </div>
             </div>
-            <span className="hidden sm:inline-block text-xs uppercase tracking-widest text-[#5B3BD1] font-bold bg-white/70 px-3 py-1 rounded-full border border-[#5B3BD1]/20">
-              Primary Identifiers
-            </span>
           </div>
 
           {/* The 3 Cards - Grid: 1 col on mobile, 3 cols on tablet/desktop */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
-            {/* Number 1: Western Tropical Sun */}
+            {/* Number 1: Life Path Number Card */}
             <div className="relative p-6 sm:p-8 rounded-[28px] bg-white/90 border border-white shadow-xl shadow-[#5B3BD1]/5 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1">
               <div>
                 <div className="flex items-center justify-between mb-5">
@@ -81,27 +128,34 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
                 </div>
 
                 <span className="editorial-caption text-[#5B3BD1] block mb-1">
-                  Sacred Number 1 &bull; Solar Purpose
+                  1st Sacred Number &bull; Life Path
                 </span>
-                <span className="text-2xl sm:text-3xl font-extrabold text-[#0D0B1A] block">
-                  {western.sunSign}
-                </span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl sm:text-4xl font-extrabold text-[#5B3BD1]">
+                    Number {numerology.lifePathNumber}
+                  </span>
+                  {numerology.isMasterLifePath && (
+                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#5B3BD1] text-white font-bold tracking-wider uppercase">
+                      Master
+                    </span>
+                  )}
+                </div>
                 <span className="text-xs uppercase tracking-wider text-[#4A4568] font-bold block mt-1">
-                  Western Tropical Sun
+                  Destiny Trajectory &bull; Solar Will
                 </span>
 
                 <div className="mt-4 p-3 rounded-xl bg-[#E7E3FB]/50 border border-[#5B3BD1]/15 text-xs text-[#0D0B1A] font-medium">
-                  Solar Radiance &bull; Core Conscious Will
+                  Western Sun in {western.sunSign} &bull; Solar Conscious Drive
                 </div>
               </div>
 
               <div className="mt-6 pt-4 border-t border-[#5B3BD1]/10 text-xs text-[#4A4568] flex items-center justify-between">
-                <span>Rising (Ascendant):</span>
+                <span>Solar Rising:</span>
                 <span className="font-bold text-[#0D0B1A]">{western.risingSign}</span>
               </div>
             </div>
 
-            {/* Number 2: Vedic Sidereal Moon & Nakshatra */}
+            {/* Number 2: Birthday Vibration Card */}
             <div className="relative p-6 sm:p-8 rounded-[28px] bg-[#3A1F8C] text-white border border-[#CFC6F6]/30 shadow-2xl flex flex-col justify-between overflow-hidden transition-all duration-300 hover:-translate-y-1">
               <div className="absolute top-0 right-0 w-36 h-36 bg-[#5B3BD1] opacity-50 rounded-full blur-2xl pointer-events-none" />
 
@@ -114,17 +168,19 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
                 </div>
 
                 <span className="editorial-caption text-[#CFC6F6] block mb-1">
-                  Sacred Number 2 &bull; Lunar Asterism
+                  2nd Sacred Number &bull; Birthday Vibration
                 </span>
-                <span className="text-2xl sm:text-3xl font-extrabold text-white block">
-                  {vedic.moonSign}
-                </span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl sm:text-4xl font-extrabold text-white">
+                    Number {numerology.birthdayNumber}
+                  </span>
+                </div>
                 <span className="text-xs uppercase tracking-wider text-[#CFC6F6] font-bold block mt-1">
-                  {vedic.moonNakshatra} &bull; Pada {vedic.moonPada}
+                  Innate Talent &bull; Lunar Asterism
                 </span>
 
                 <div className="mt-4 p-3 rounded-xl bg-[#5B3BD1]/40 border border-[#CFC6F6]/20 text-xs text-white/95 font-medium">
-                  Sidereal Moon &bull; Subconscious Sanctuary
+                  Sidereal Moon in {vedic.moonSign} &bull; {vedic.moonNakshatra} (Pada {vedic.moonPada})
                 </div>
               </div>
 
@@ -134,7 +190,7 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
               </div>
             </div>
 
-            {/* Number 3: Pythagorean Life Path Number */}
+            {/* Number 3: Expression Number Card */}
             <div className="relative p-6 sm:p-8 rounded-[28px] bg-white/90 border border-white shadow-xl shadow-[#5B3BD1]/5 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1">
               <div>
                 <div className="flex items-center justify-between mb-5">
@@ -145,30 +201,30 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
                 </div>
 
                 <span className="editorial-caption text-[#5B3BD1] block mb-1">
-                  Sacred Number 3 &bull; Destiny Frequency
+                  3rd Sacred Number &bull; Expression / Calling
                 </span>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl sm:text-4xl font-extrabold text-[#5B3BD1]">
-                    {numerology.lifePathNumber}
+                    Number {numerology.expressionNumber}
                   </span>
-                  {numerology.isMasterLifePath && (
+                  {numerology.isMasterExpression && (
                     <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#5B3BD1] text-white font-bold tracking-wider uppercase">
-                      Master Number
+                      Master
                     </span>
                   )}
                 </div>
                 <span className="text-xs uppercase tracking-wider text-[#4A4568] font-bold block mt-1">
-                  Life Path Vibration
+                  Soul Expression &bull; Outer Potential
                 </span>
 
                 <div className="mt-4 p-3 rounded-xl bg-[#E7E3FB]/50 border border-[#5B3BD1]/15 text-xs text-[#0D0B1A] font-medium">
-                  Pythagorean Matrix &bull; Planetary Ruler {synthesis.dailyInsight.alignedPlanet}
+                  Pythagorean Name Matrix &bull; Planetary Ruler {synthesis.dailyInsight.alignedPlanet}
                 </div>
               </div>
 
               <div className="mt-6 pt-4 border-t border-[#5B3BD1]/10 text-xs text-[#4A4568] flex items-center justify-between">
-                <span>Birthday Vibration:</span>
-                <span className="font-bold text-[#0D0B1A]">Day {numerology.birthdayNumber}</span>
+                <span>Soul Urge Frequency:</span>
+                <span className="font-bold text-[#0D0B1A]">Number {numerology.soulUrgeNumber}</span>
               </div>
             </div>
           </div>
@@ -184,7 +240,7 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
               <div>
                 <span className="editorial-caption text-[#5B3BD1]">Triad Synthesis &bull; Meaning &amp; Dynamics</span>
                 <h4 className="text-lg sm:text-xl font-bold text-[#0D0B1A]">
-                  How Your 3 Sacred Numbers Interlock
+                  How Your 3 Sacred Numbers Interlock ({numerology.lifePathNumber} &bull; {numerology.birthdayNumber} &bull; {numerology.expressionNumber})
                 </h4>
               </div>
             </div>
@@ -193,31 +249,31 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-xs sm:text-sm text-[#4A4568] leading-relaxed">
               <div className="p-5 rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/10">
                 <span className="font-bold text-[#0D0B1A] block text-sm mb-1.5 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#5B3BD1]" />
-                  1. Solar Conscious Purpose ({western.sunSign})
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#5B3BD1]" />
+                  1. Life Path (Number {numerology.lifePathNumber})
                 </span>
                 <p>
-                  {synthesis.cosmicTriad.soulPurpose.description}
+                  Governs your overarching destiny trajectory and purpose in this lifetime. Through Western Sun in {western.sunSign}, you are called to embody {numerology.descriptions.lifePath}
                 </p>
               </div>
 
               <div className="p-5 rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/10">
                 <span className="font-bold text-[#0D0B1A] block text-sm mb-1.5 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#3A1F8C]" />
-                  2. Lunar Subconscious Sanctuary ({vedic.moonNakshatra})
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#3A1F8C]" />
+                  2. Birthday Vibration (Number {numerology.birthdayNumber})
                 </span>
                 <p>
-                  {synthesis.cosmicTriad.innerMind.description}
+                  Represents your innate natural strengths and instinctive emotional sanctuary. Aligned with your Vedic Moon in {vedic.moonSign} ({vedic.moonNakshatra}), it provides {numerology.descriptions.birthday}
                 </p>
               </div>
 
               <div className="p-5 rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/10">
                 <span className="font-bold text-[#0D0B1A] block text-sm mb-1.5 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#5B3BD1]" />
-                  3. Life Path Trajectory (Number {numerology.lifePathNumber})
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#5B3BD1]" />
+                  3. Expression Calling (Number {numerology.expressionNumber})
                 </span>
                 <p>
-                  {synthesis.cosmicTriad.destinyPath.description}
+                  Calculated from your full birth name matrix, governing your outer potential and social manifestation. It channels {numerology.descriptions.expression}
                 </p>
               </div>
             </div>
@@ -225,10 +281,10 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
             {/* Overarching Harmonization Summary */}
             <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-[#E7E3FB] to-white border border-[#5B3BD1]/20">
               <span className="text-[11px] uppercase tracking-wider font-bold text-[#5B3BD1] block mb-1">
-                The Harmonized Synthesis
+                The Harmonized Synthesis of Your 3 Numbers
               </span>
               <p className="text-xs sm:text-sm text-[#0D0B1A] font-medium leading-relaxed">
-                {synthesis.synthesisSummary}
+                Your sacred numeric triad — <strong>{numerology.lifePathNumber}</strong> (Life Path), <strong>{numerology.birthdayNumber}</strong> (Birthday), and <strong>{numerology.expressionNumber}</strong> (Expression) — forms a complete vibrational circuit. Together with your {western.sunSign} Sun, {vedic.moonSign} Moon, and {vedic.ascendantSign} Lagna, they direct your conscious drive, subconscious intuition, and outward legacy.
               </p>
             </div>
           </div>

@@ -44,6 +44,33 @@ class BirthProfile extends Model
         'pada' => 'integer',
     ];
 
+    protected $appends = [
+        'number_1',
+        'number_2',
+        'number_3',
+        'formatted_numbers',
+    ];
+
+    public function getNumber1Attribute(): int
+    {
+        return (int) $this->life_path_number;
+    }
+
+    public function getNumber2Attribute(): int
+    {
+        return (int) $this->birthday_number;
+    }
+
+    public function getNumber3Attribute(): int
+    {
+        return (int) $this->expression_number;
+    }
+
+    public function getFormattedNumbersAttribute(): string
+    {
+        return "{$this->life_path_number} • {$this->birthday_number} • {$this->expression_number}";
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

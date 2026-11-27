@@ -34,6 +34,12 @@ interface AdminProfile {
   nakshatra: string;
   pada?: number;
   life_path_number: number;
+  birthday_number?: number;
+  expression_number?: number;
+  number_1?: number;
+  number_2?: number;
+  number_3?: number;
+  formatted_numbers?: string;
   is_master_number?: boolean;
   created_at: string;
 }
@@ -61,7 +67,13 @@ export default function AdminPage() {
       moon_sign: "Scorpio",
       nakshatra: "Anuradha",
       pada: 3,
-      life_path_number: 7,
+      life_path_number: 8,
+      birthday_number: 9,
+      expression_number: 7,
+      number_1: 8,
+      number_2: 9,
+      number_3: 7,
+      formatted_numbers: "8 • 9 • 7",
       is_master_number: false,
       created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
     },
@@ -77,6 +89,12 @@ export default function AdminPage() {
       nakshatra: "Uttara Bhadrapada",
       pada: 2,
       life_path_number: 11,
+      birthday_number: 3,
+      expression_number: 6,
+      number_1: 11,
+      number_2: 3,
+      number_3: 6,
+      formatted_numbers: "11 • 3 • 6",
       is_master_number: true,
       created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
     },
@@ -92,6 +110,12 @@ export default function AdminPage() {
       nakshatra: "Mula",
       pada: 1,
       life_path_number: 3,
+      birthday_number: 4,
+      expression_number: 8,
+      number_1: 3,
+      number_2: 4,
+      number_3: 8,
+      formatted_numbers: "3 • 4 • 8",
       is_master_number: false,
       created_at: new Date(Date.now() - 3600000 * 12).toISOString(),
     },
@@ -195,26 +219,39 @@ export default function AdminPage() {
       "Vedic Moon Sign",
       "Nakshatra",
       "Pada",
-      "Life Path Number",
+      "The 3 Numbers",
+      "Number 1 (Life Path)",
+      "Number 2 (Birthday)",
+      "Number 3 (Expression)",
       "Is Master Number",
       "Calculated At",
     ];
 
-    const rows = filteredProfiles.map((p) => [
-      p.id,
-      `"${p.full_name}"`,
-      `"${p.email || ""}"`,
-      p.birth_date,
-      p.birth_time || "Unknown",
-      `"${p.birth_city || ""}"`,
-      p.sun_sign,
-      p.moon_sign,
-      p.nakshatra,
-      p.pada || 1,
-      p.life_path_number,
-      p.is_master_number ? "YES" : "NO",
-      p.created_at,
-    ]);
+    const rows = filteredProfiles.map((p) => {
+      const num1 = p.number_1 || p.life_path_number;
+      const num2 = p.number_2 || p.birthday_number || 1;
+      const num3 = p.number_3 || p.expression_number || 1;
+      const formatted = p.formatted_numbers || `${num1} • ${num2} • ${num3}`;
+
+      return [
+        p.id,
+        `"${p.full_name}"`,
+        `"${p.email || ""}"`,
+        p.birth_date,
+        p.birth_time || "Unknown",
+        `"${p.birth_city || ""}"`,
+        p.sun_sign,
+        p.moon_sign,
+        p.nakshatra,
+        p.pada || 1,
+        `"${formatted}"`,
+        num1,
+        num2,
+        num3,
+        p.is_master_number ? "YES" : "NO",
+        p.created_at,
+      ];
+    });
 
     const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
     const encodedUri = encodeURI(csvContent);
@@ -407,9 +444,9 @@ export default function AdminPage() {
                 <tr>
                   <th className="p-4">User / Name</th>
                   <th className="p-4">Birth Parameters</th>
+                  <th className="p-4 text-center">The 3 Numbers</th>
                   <th className="p-4">Western Sun</th>
                   <th className="p-4">Vedic Moon &amp; Asterism</th>
-                  <th className="p-4">Life Path</th>
                   <th className="p-4">Date Recorded</th>
                   <th className="p-4 text-right">Action</th>
                 </tr>
@@ -422,49 +459,67 @@ export default function AdminPage() {
                     </td>
                   </tr>
                 ) : (
-                  filteredProfiles.map((p) => (
-                    <tr key={p.id} className="hover:bg-[#E7E3FB]/40 transition-colors">
-                      <td className="p-4 font-semibold text-[#0D0B1A]">
-                        <div>{p.full_name}</div>
-                        {p.email && <div className="text-[11px] text-gray-500 font-normal">{p.email}</div>}
-                      </td>
-                      <td className="p-4 text-[#4A4568]">
-                        <div>{p.birth_date} {p.birth_time ? `@ ${p.birth_time}` : ""}</div>
-                        <div className="text-[11px] text-gray-500">{p.birth_city || "-"}</div>
-                      </td>
-                      <td className="p-4 font-bold text-[#5B3BD1]">{p.sun_sign}</td>
-                      <td className="p-4">
-                        <span className="font-semibold text-[#0D0B1A]">{p.moon_sign}</span>
-                        <span className="block text-[11px] text-gray-500">
-                          {p.nakshatra} (Pada {p.pada || 1})
-                        </span>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-base font-extrabold text-[#5B3BD1]">
-                            {p.life_path_number}
-                          </span>
-                          {p.is_master_number && (
-                            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#5B3BD1] text-white font-bold uppercase">
-                              Master
+                  filteredProfiles.map((p) => {
+                    const num1 = p.number_1 || p.life_path_number;
+                    const num2 = p.number_2 || p.birthday_number || 1;
+                    const num3 = p.number_3 || p.expression_number || 1;
+
+                    return (
+                      <tr key={p.id} className="hover:bg-[#E7E3FB]/40 transition-colors">
+                        <td className="p-4 font-semibold text-[#0D0B1A]">
+                          <div>{p.full_name}</div>
+                          {p.email && <div className="text-[11px] text-gray-500 font-normal">{p.email}</div>}
+                        </td>
+                        <td className="p-4 text-[#4A4568]">
+                          <div>{p.birth_date} {p.birth_time ? `@ ${p.birth_time}` : ""}</div>
+                          <div className="text-[11px] text-gray-500">{p.birth_city || "-"}</div>
+                        </td>
+                        <td className="p-4 text-center">
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#5B3BD1]/10 text-[#5B3BD1] font-mono font-bold text-xs border border-[#5B3BD1]/20 shadow-xs">
+                            <span
+                              className="w-6 h-6 rounded-lg bg-[#5B3BD1] text-white flex items-center justify-center text-xs font-extrabold shadow-xs"
+                              title="1st Number: Life Path"
+                            >
+                              {num1}
                             </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="p-4 text-gray-500 font-mono text-[11px]">
-                        {new Date(p.created_at).toLocaleDateString()}
-                      </td>
-                      <td className="p-4 text-right">
-                        <button
-                          onClick={() => setSelectedProfile(p)}
-                          className="px-3 py-1.5 rounded-lg bg-[#E7E3FB] text-[#5B3BD1] hover:bg-[#5B3BD1] hover:text-white transition-colors text-xs font-semibold inline-flex items-center gap-1"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>Inspect</span>
-                        </button>
-                      </td>
-                    </tr>
-                  ))
+                            <span className="text-gray-400">•</span>
+                            <span
+                              className="w-6 h-6 rounded-lg bg-[#3A1F8C] text-white flex items-center justify-center text-xs font-extrabold shadow-xs"
+                              title="2nd Number: Birthday"
+                            >
+                              {num2}
+                            </span>
+                            <span className="text-gray-400">•</span>
+                            <span
+                              className="w-6 h-6 rounded-lg bg-[#5B3BD1] text-white flex items-center justify-center text-xs font-extrabold shadow-xs"
+                              title="3rd Number: Expression"
+                            >
+                              {num3}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="p-4 font-bold text-[#5B3BD1]">{p.sun_sign}</td>
+                        <td className="p-4">
+                          <span className="font-semibold text-[#0D0B1A]">{p.moon_sign}</span>
+                          <span className="block text-[11px] text-gray-500">
+                            {p.nakshatra} (Pada {p.pada || 1})
+                          </span>
+                        </td>
+                        <td className="p-4 text-gray-500 font-mono text-[11px]">
+                          {new Date(p.created_at).toLocaleDateString()}
+                        </td>
+                        <td className="p-4 text-right">
+                          <button
+                            onClick={() => setSelectedProfile(p)}
+                            className="px-3 py-1.5 rounded-lg bg-[#E7E3FB] text-[#5B3BD1] hover:bg-[#5B3BD1] hover:text-white transition-colors text-xs font-semibold inline-flex items-center gap-1"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>Inspect</span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
@@ -487,7 +542,40 @@ export default function AdminPage() {
                 {selectedProfile.full_name}
               </h3>
 
-              <div className="space-y-3 text-xs text-[#0D0B1A]">
+              <div className="space-y-3.5 text-xs text-[#0D0B1A]">
+                {/* The 3 Numbers Highlight Card */}
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-[#5B3BD1]/10 via-[#E7E3FB] to-[#5B3BD1]/10 border border-[#5B3BD1]/20 text-center">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-[#5B3BD1] block mb-2">
+                    The 3 Sacred Numbers
+                  </span>
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="flex flex-col items-center">
+                      <div className="w-12 h-12 rounded-xl bg-[#5B3BD1] text-white flex items-center justify-center font-extrabold text-lg shadow-sm">
+                        {selectedProfile.number_1 || selectedProfile.life_path_number}
+                      </div>
+                      <span className="text-[10px] font-bold text-gray-700 mt-1">1: Life Path</span>
+                    </div>
+
+                    <span className="text-xl font-extrabold text-[#5B3BD1]">•</span>
+
+                    <div className="flex flex-col items-center">
+                      <div className="w-12 h-12 rounded-xl bg-[#3A1F8C] text-white flex items-center justify-center font-extrabold text-lg shadow-sm">
+                        {selectedProfile.number_2 || selectedProfile.birthday_number || 1}
+                      </div>
+                      <span className="text-[10px] font-bold text-gray-700 mt-1">2: Birthday</span>
+                    </div>
+
+                    <span className="text-xl font-extrabold text-[#5B3BD1]">•</span>
+
+                    <div className="flex flex-col items-center">
+                      <div className="w-12 h-12 rounded-xl bg-[#5B3BD1] text-white flex items-center justify-center font-extrabold text-lg shadow-sm">
+                        {selectedProfile.number_3 || selectedProfile.expression_number || 1}
+                      </div>
+                      <span className="text-[10px] font-bold text-gray-700 mt-1">3: Expression</span>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="p-3.5 rounded-xl bg-[#E7E3FB]/50 border border-[#5B3BD1]/15 grid grid-cols-2 gap-2">
                   <div>
                     <span className="text-gray-500 block">Birth Date</span>
@@ -514,11 +602,9 @@ export default function AdminPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">Nakshatra &amp; Pada:</span>
-                    <span className="font-bold text-[#0D0B1A]">{selectedProfile.nakshatra} (Pada {selectedProfile.pada || 1})</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Life Path Vibration:</span>
-                    <span className="font-bold text-[#5B3BD1]">Number {selectedProfile.life_path_number}</span>
+                    <span className="font-bold text-[#0D0B1A]">
+                      {selectedProfile.nakshatra} (Pada {selectedProfile.pada || 1})
+                    </span>
                   </div>
                 </div>
               </div>
