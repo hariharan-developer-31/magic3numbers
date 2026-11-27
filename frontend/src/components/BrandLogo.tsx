@@ -14,19 +14,23 @@ export default function BrandLogo({
 }) {
   const isWhite = textColor.includes("white");
   const digitColor = isWhite ? "text-[#CFC6F6]" : "text-[#5B3BD1]";
+  const glowFilter = isWhite
+    ? "drop-shadow(0 0 10px rgba(207, 198, 246, 0.7)) brightness(1.15)"
+    : "drop-shadow(0 2px 8px rgba(91, 59, 209, 0.25))";
 
   return (
     <div className="flex items-center gap-2.5 sm:gap-3 group">
-      {/* Golden Celestial Star-3 Emblem */}
+      {/* Transparent Brand Emblem in Palette Theme */}
       <div
-        className={`relative ${className} rounded-xl overflow-hidden flex-shrink-0 transition-transform duration-500 ease-editorial group-hover:scale-105 shadow-md shadow-[#5B3BD1]/20`}
+        className={`relative ${className} flex-shrink-0 transition-transform duration-500 ease-editorial group-hover:scale-105`}
+        style={{ filter: glowFilter }}
       >
         <Image
           src="/logo.png"
-          alt="magic3numbers golden star logo"
+          alt="magic3numbers star emblem"
           width={80}
           height={80}
-          className="w-full h-full object-cover rounded-xl"
+          className="w-full h-full object-contain"
           priority
         />
       </div>

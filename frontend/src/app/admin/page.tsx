@@ -268,13 +268,13 @@ export default function AdminPage() {
     return (
       <main className="min-h-screen w-full bg-[#0D0B1A] text-white flex items-center justify-center p-4">
         <div className="w-full max-w-md p-8 sm:p-10 rounded-[32px] bg-[#16122C] border border-[#CFC6F6]/20 shadow-2xl text-center">
-          <div className="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-4 shadow-lg shadow-[#5B3BD1]/30">
+          <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center drop-shadow-lg">
             <Image
               src="/logo.png"
               alt="magic3numbers emblem"
               width={90}
               height={90}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
 

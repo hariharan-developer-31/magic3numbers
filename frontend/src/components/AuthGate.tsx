@@ -101,13 +101,13 @@ export default function AuthGate({
     <div className="w-full max-w-xl mx-auto p-6 sm:p-10 rounded-[28px] sm:rounded-[36px] bg-white/90 backdrop-blur-xl border border-white shadow-2xl shadow-[#5B3BD1]/10 overflow-hidden box-border">
       {/* Header with Golden Logo */}
       <div className="text-center mb-6">
-        <div className="w-14 h-14 rounded-2xl overflow-hidden mx-auto mb-3 shadow-md shadow-[#5B3BD1]/20">
+        <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center drop-shadow-md">
           <Image
             src="/logo.png"
             alt="magic3numbers star emblem"
             width={80}
             height={80}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         </div>
         <h3 className="text-xl sm:text-2xl font-bold text-[#0D0B1A] uppercase tracking-tight">
