@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { User, Mail, Lock, Sparkles, LogIn, UserPlus, ArrowRight } from "lucide-react";
+import Image from "next/image";
+import { User, Mail, Lock, LogIn, UserPlus, ArrowRight } from "lucide-react";
 
 export interface UserSession {
   id?: number;
@@ -54,11 +55,9 @@ export default function AuthGate({
           }
         }
 
-        // Local session fallback
         const userObj: UserSession = { name, email };
         onAuthSuccess(userObj);
       } else {
-        // Login
         if (apiUrl) {
           try {
             const res = await fetch(`${apiUrl}/api/v1/auth/login`, {
@@ -81,7 +80,6 @@ export default function AuthGate({
           }
         }
 
-        // Local session fallback
         const userObj: UserSession = { name: email.split("@")[0] || "Member", email };
         onAuthSuccess(userObj);
       }
@@ -101,10 +99,16 @@ export default function AuthGate({
 
   return (
     <div className="w-full max-w-xl mx-auto p-6 sm:p-10 rounded-[28px] sm:rounded-[36px] bg-white/90 backdrop-blur-xl border border-white shadow-2xl shadow-[#5B3BD1]/10 overflow-hidden box-border">
-      {/* Header */}
+      {/* Header with Golden Logo */}
       <div className="text-center mb-6">
-        <div className="w-12 h-12 rounded-2xl bg-[#5B3BD1]/10 text-[#5B3BD1] flex items-center justify-center mx-auto mb-3">
-          <Sparkles className="w-6 h-6" />
+        <div className="w-14 h-14 rounded-2xl overflow-hidden mx-auto mb-3 shadow-md shadow-[#5B3BD1]/20">
+          <Image
+            src="/logo.png"
+            alt="magic3numbers star emblem"
+            width={80}
+            height={80}
+            className="w-full h-full object-cover"
+          />
         </div>
         <h3 className="text-xl sm:text-2xl font-bold text-[#0D0B1A] uppercase tracking-tight">
           Unlock Your Blueprint
@@ -220,7 +224,7 @@ export default function AuthGate({
         </button>
       </form>
 
-      {/* Guest / Instant Testing Option */}
+      {/* Guest / Instant Access Option */}
       <div className="mt-5 pt-4 border-t border-[#5B3BD1]/10 text-center">
         <button
           type="button"

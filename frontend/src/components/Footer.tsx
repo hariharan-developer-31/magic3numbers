@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { ShieldCheck, Lock } from "lucide-react";
+import BrandLogo from "./BrandLogo";
 
 export default function Footer() {
   return (
@@ -15,14 +16,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 pb-12 border-b border-[#3A1F8C]/60">
           {/* Brand Info */}
           <div className="sm:col-span-2 space-y-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full border border-[#CFC6F6] flex items-center justify-center font-bold text-xs sm:text-sm">
-                3
-              </div>
-              <span className="text-lg sm:text-xl font-bold tracking-tight uppercase">
-                magic<span className="text-[#CFC6F6]">3</span>numbers
-              </span>
-            </div>
+            <BrandLogo textColor="text-white" />
             <p className="text-xs text-[#CFC6F6]/75 max-w-md leading-relaxed">
               Personal Astrology, Numerology &amp; Cosmic Number Discovery Platform. Synthesizing
               ancient Vedic Jyotish, Western Natal geometry, and Pythagorean numerology into

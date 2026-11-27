@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import BrandLogo from "@/components/BrandLogo";
 import {
   ShieldCheck,
   Search,
@@ -229,8 +231,14 @@ export default function AdminPage() {
     return (
       <main className="min-h-screen w-full bg-[#0D0B1A] text-white flex items-center justify-center p-4">
         <div className="w-full max-w-md p-8 sm:p-10 rounded-[32px] bg-[#16122C] border border-[#CFC6F6]/20 shadow-2xl text-center">
-          <div className="w-12 h-12 rounded-2xl bg-[#5B3BD1] flex items-center justify-center mx-auto mb-4 text-[#CFC6F6]">
-            <Lock className="w-6 h-6" />
+          <div className="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-4 shadow-lg shadow-[#5B3BD1]/30">
+            <Image
+              src="/logo.png"
+              alt="magic3numbers emblem"
+              width={90}
+              height={90}
+              className="w-full h-full object-cover"
+            />
           </div>
 
           <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-tight text-white mb-2">
@@ -294,17 +302,10 @@ export default function AdminPage() {
             >
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-base sm:text-lg font-bold tracking-tight uppercase">
-                  magic<span className="text-[#5B3BD1]">3</span>numbers
-                </span>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-[#5B3BD1] text-white">
-                  Admin Panel
-                </span>
-              </div>
-              <span className="text-xs text-[#4A4568] hidden sm:inline">
-                Birth Profiles &amp; Calculation Database
+            <div className="flex items-center gap-3">
+              <BrandLogo className="w-8 h-8" showText={true} />
+              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-[#5B3BD1] text-white">
+                Admin Panel
               </span>
             </div>
           </div>

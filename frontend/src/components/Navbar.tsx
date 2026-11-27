@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Sparkles, Menu, X } from "lucide-react";
+import BrandLogo from "./BrandLogo";
 
 export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?: () => void }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -13,7 +14,6 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
       const scrollY = window.scrollY;
       setIsScrolled(scrollY > 30);
 
-      // Detect if user is scrolled over any dark section
       const darkSections = document.querySelectorAll("[data-theme='dark']");
       let overDark = false;
       const navPosition = scrollY + 45;
@@ -35,7 +35,6 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Prevent background scroll when mobile drawer is open
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -68,23 +67,15 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ease-editorial ${navBgClass}`}
       >
         <div className="content-container flex items-center justify-between h-16 sm:h-20 md:h-24">
-          {/* Minimal Logo with Hover Rotation */}
+          {/* Brand Logo with New Golden Celestial Star Emblem */}
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="group flex items-center gap-2.5 sm:gap-3.5 text-left focus:outline-none"
+            className="focus:outline-none"
           >
-            <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-current flex items-center justify-center transition-transform duration-700 ease-editorial group-hover:rotate-180 flex-shrink-0">
-              <span className="text-sm sm:text-base font-extrabold tracking-tighter">3</span>
-              <div className="absolute -inset-1 border border-dashed border-[#5B3BD1] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            </div>
-            <span
-              className={`text-base sm:text-lg md:text-xl font-bold tracking-tight uppercase ${textColorClass}`}
-            >
-              magic<span className="text-[#5B3BD1]">3</span>numbers
-            </span>
+            <BrandLogo textColor={textColorClass} />
           </button>
 
-          {/* Desktop Animated Underline Links */}
+          {/* Desktop Links */}
           <div className="hidden lg:flex items-center gap-8 xl:gap-12 text-sm font-medium">
             <button
               onClick={() => scrollTo("three-pillars")}
@@ -118,14 +109,14 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
             </button>
           </div>
 
-          {/* Right-aligned Primary CTA Button (Visible on Tablet & Desktop) */}
+          {/* Right-aligned Primary CTA Button */}
           <div className="hidden sm:flex items-center gap-4">
             <button
               onClick={() => {
                 if (onScrollToCalculator) onScrollToCalculator();
                 else scrollTo("profile-generator");
               }}
-              className="group relative inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-xs sm:text-sm font-semibold tracking-wide uppercase transition-all duration-300 ease-editorial bg-[#5B3BD1] text-white hover:bg-[#3A1F8C] hover:shadow-lg hover:shadow-[#5B3BD1]/25 active:scale-95"
+              className="group relative inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-xs sm:text-sm font-semibold tracking-wide uppercase transition-all duration-300 ease-editorial bg-[#5B3BD1] text-white hover:bg-[#3A1F8C] hover:shadow-lg hover:shadow-[#5B3BD1]/25 active:scale-95 shadow-xs"
             >
               <Sparkles className="w-3.5 h-3.5 text-[#CFC6F6] transition-transform duration-500 group-hover:rotate-45" />
               <span>Get Your 3 Numbers</span>
