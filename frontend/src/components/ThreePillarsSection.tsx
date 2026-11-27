@@ -70,18 +70,18 @@ export default function ThreePillarsSection() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 sm:w-[600px] h-80 sm:h-[600px] bg-[#5B3BD1] opacity-30 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="content-container relative z-10 w-full">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-14 md:mb-18">
-          <div className="max-w-2xl">
+        {/* Section Header: 60% space allocated to headline above tablet view */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-10 mb-10 sm:mb-16 md:mb-20">
+          <div className="w-full md:w-[60%] lg:w-[60%] flex-shrink-0">
             <span className="editorial-caption text-[#CFC6F6]">The Methodological Foundation</span>
-            <h2 className="section-headline text-white mt-3 uppercase tracking-tight">
+            <h2 className="section-headline text-white mt-3 uppercase tracking-tight leading-[1.08]">
               Three Sacred <span className="text-[#CFC6F6]">Disciplines.</span>
               <br />
               One Unified Blueprint.
             </h2>
           </div>
-          <div className="mt-4 md:mt-0 max-w-md">
-            <p className="text-xs sm:text-sm text-[#CFC6F6]/85 font-normal leading-relaxed">
+          <div className="w-full md:w-[36%] lg:w-[35%]">
+            <p className="text-xs sm:text-sm md:text-base text-[#CFC6F6]/85 font-normal leading-relaxed">
               Never arbitrary, never vague. Each component runs on deterministic mathematical formulas
               documented across millennia and adapted for digital precision.
             </p>
@@ -98,17 +98,17 @@ export default function ThreePillarsSection() {
           </span>
         </div>
 
-        {/* Swipeable Container on Mobile, 3-column Grid on Desktop - with top & bottom breathing room to prevent hover clipping */}
+        {/* Swipeable Container on Mobile, Wider 3-column Grid Above Tablet */}
         <div
           onScroll={handleMobileScroll}
-          className="flex md:grid md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory pt-4 pb-6 sm:pt-6 sm:pb-8 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0"
+          className="flex md:grid md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8 xl:gap-10 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory pt-4 pb-8 sm:pt-6 sm:pb-10 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0"
         >
           {pillars.map((pillar) => {
             const Icon = pillar.icon;
             return (
               <div
                 key={pillar.num}
-                className="w-[84vw] max-w-[340px] sm:w-[380px] md:w-auto flex-shrink-0 snap-center group relative flex flex-col justify-between p-6 sm:p-8 lg:p-10 rounded-[28px] bg-[#0D0B1A]/55 border border-[#CFC6F6]/20 backdrop-blur-md transition-all duration-300 ease-editorial hover:border-[#CFC6F6]/40 md:hover:-translate-y-2 shadow-xl"
+                className="w-[88vw] max-w-[420px] sm:w-[440px] md:w-full md:max-w-none flex-shrink-0 snap-center group relative flex flex-col justify-between p-7 sm:p-9 lg:p-11 rounded-[32px] bg-[#0D0B1A]/55 border border-[#CFC6F6]/20 backdrop-blur-md transition-all duration-300 ease-editorial hover:border-[#CFC6F6]/40 md:hover:-translate-y-2 shadow-2xl"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">
