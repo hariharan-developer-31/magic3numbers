@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import ThreePillarsSection from "@/components/ThreePillarsSection";
@@ -10,6 +10,7 @@ import InsightsCalendarSection from "@/components/InsightsCalendarSection";
 import PremiumReportSection from "@/components/PremiumReportSection";
 import Footer from "@/components/Footer";
 import CalculationLoader from "@/components/CalculationLoader";
+import { UserSession } from "@/components/AuthGate";
 import { BirthInput, FullCosmicAnalysis } from "@/types/astrology";
 import { performFullAnalysis } from "@/lib/engines/synthesis";
 
@@ -26,16 +27,36 @@ const INITIAL_INPUT: BirthInput = {
 };
 
 export default function Home() {
+  const [user, setUser] = useState<UserSession | null>(null);
   const [analysis, setAnalysis] = useState<FullCosmicAnalysis>(() => performFullAnalysis(INITIAL_INPUT));
   const [isCalculating, setIsCalculating] = useState(false);
   const [currentCalculatingName, setCurrentCalculatingName] = useState("");
+
+  // Check saved user session
+  useEffect(() => {
+    const savedUser = localStorage.getItem("magic3_user");
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (e) {}
+    }
+  }, []);
+
+  const handleAuthSuccess = (authenticatedUser: UserSession) => {
+    setUser(authenticatedUser);
+    localStorage.setItem("magic3_user", JSON.stringify(authenticatedUser));
+  };
+
+  const handleSignOut = () => {
+    setUser(null);
+    localStorage.removeItem("magic3_user");
+  };
 
   const handleCalculate = async (input: BirthInput) => {
     setCurrentCalculatingName(input.fullName);
     setIsCalculating(true);
 
     try {
-      // Optional check for external Laravel backend on Railway
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       let calculatedResult: FullCosmicAnalysis | null = null;
 
@@ -45,6 +66,8 @@ export default function Home() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
+              user_id: user?.id || null,
+              email: user?.email || null,
               full_name: input.fullName,
               birth_date: input.birthDate,
               birth_time: input.birthTime,
@@ -76,9 +99,31 @@ export default function Home() {
       }
 
       if (!calculatedResult) {
-        // High-precision local deterministic engine
+        // High-precision local deterministic calculation
         calculatedResult = performFullAnalysis(input);
       }
+
+      // Record profile for Admin Panel in localStorage as persistent client telemetry
+      try {
+        const existingRecords = JSON.parse(localStorage.getItem("magic3_admin_records") || "[]");
+        const newRecord = {
+          id: Date.now(),
+          full_name: input.fullName,
+          email: user?.email || "anonymous@member.com",
+          birth_date: input.birthDate,
+          birth_time: input.birthTime,
+          is_time_unknown: input.isTimeUnknown,
+          birth_city: input.birthCity,
+          sun_sign: calculatedResult.western.sunSign,
+          moon_sign: calculatedResult.vedic.moonSign,
+          nakshatra: calculatedResult.vedic.moonNakshatra,
+          pada: calculatedResult.vedic.moonPada,
+          life_path_number: calculatedResult.numerology.lifePathNumber,
+          is_master_number: calculatedResult.numerology.isMasterLifePath,
+          created_at: new Date().toISOString(),
+        };
+        localStorage.setItem("magic3_admin_records", JSON.stringify([newRecord, ...existingRecords]));
+      } catch (e) {}
 
       // Allow smooth animation steps in CalculationLoader (min 1.6s for tactile realism)
       await new Promise((resolve) => setTimeout(resolve, 1800));
@@ -126,14 +171,20 @@ export default function Home() {
       {/* Fixed Transparent / Adaptive Navbar */}
       <Navbar onScrollToCalculator={scrollToCalculator} />
 
-      {/* Section 1: Hero */}
+      {/* Section 1: Hero (strictly 100vh) */}
       <HeroSection onGetStarted={scrollToCalculator} onExplore={scrollToPillars} />
 
       {/* Section 2: The Three Pillars */}
       <ThreePillarsSection />
 
-      {/* Section 3: Birth Profile Generator Input */}
-      <ProfileGeneratorSection onCalculate={handleCalculate} isLoading={isCalculating} />
+      {/* Section 3: Birth Profile Generator Input (Gated with Account Login / Sign Up) */}
+      <ProfileGeneratorSection
+        user={user}
+        onAuthSuccess={handleAuthSuccess}
+        onSignOut={handleSignOut}
+        onCalculate={handleCalculate}
+        isLoading={isCalculating}
+      />
 
       {/* Section 4: Live Cosmic Dashboard - THE 3 NUMBERS REVEALED 1ST, THEN EXPLAINED BELOW */}
       <DashboardSection analysis={analysis} />

@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import { ShieldCheck, Lock } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -70,12 +71,18 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Copyright */}
+        {/* Bottom Copyright & Admin Link */}
         <div className="mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-[#CFC6F6]/60 gap-3">
           <p>&copy; {new Date().getFullYear()} magic3numbers. All rights reserved.</p>
           <div className="flex items-center gap-4 text-[11px]">
             <span>Deterministic Engine v1.0.0</span>
-            <span>English &bull; Bahasa Malaysia (Phase 1)</span>
+            <Link
+              href="/admin"
+              className="inline-flex items-center gap-1 text-[#CFC6F6] hover:underline font-semibold"
+            >
+              <Lock className="w-3 h-3" />
+              <span>Admin Panel</span>
+            </Link>
           </div>
         </div>
       </div>
