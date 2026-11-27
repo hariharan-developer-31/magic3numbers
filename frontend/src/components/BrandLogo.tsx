@@ -12,6 +12,9 @@ export default function BrandLogo({
   showText?: boolean;
   textColor?: string;
 }) {
+  const isWhite = textColor.includes("white");
+  const digitColor = isWhite ? "text-[#CFC6F6]" : "text-[#5B3BD1]";
+
   return (
     <div className="flex items-center gap-2.5 sm:gap-3 group">
       {/* Golden Celestial Star-3 Emblem */}
@@ -32,7 +35,7 @@ export default function BrandLogo({
         <span
           className={`text-base sm:text-lg md:text-xl font-bold tracking-tight uppercase ${textColor} select-none`}
         >
-          magic<span className="text-[#5B3BD1]">3</span>numbers
+          magic<span className={digitColor}>3</span>numbers
         </span>
       )}
     </div>
