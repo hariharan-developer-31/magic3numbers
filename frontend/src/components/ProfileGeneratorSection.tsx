@@ -202,6 +202,7 @@ export default function ProfileGeneratorSection({
                       value={citySearch}
                       onChange={(e) => handleCityInput(e.target.value)}
                       onFocus={() => setCityDropdownOpen(true)}
+                      onBlur={() => setTimeout(() => setCityDropdownOpen(false), 200)}
                       placeholder="Search city, e.g. Kuala Lumpur, George Town, Singapore..."
                       className="w-full box-border px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-sm sm:text-base font-medium transition-all"
                     />

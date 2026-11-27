@@ -32,8 +32,8 @@ export default function HeroSection({
       <div className="absolute inset-0 bg-gradient-to-b from-[#0D0B1A]/75 via-[#0D0B1A]/35 to-[#0D0B1A]/90 z-[1] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(13,11,26,0.5)_70%,rgba(13,11,26,0.85)_100%)] z-[1] pointer-events-none" />
 
-      {/* Centered Main Content Layout - Strict 100vh */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center max-w-3xl mx-auto w-full px-4">
+      {/* Centered Main Content Layout - Strict 100vh with safe navbar clearance */}
+      <div className="relative z-10 flex flex-col items-center justify-center text-center max-w-3xl mx-auto w-full px-4 pt-16 sm:pt-20 md:pt-0">
         {/* Hero Headline - Centered & Balanced */}
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white uppercase tracking-tight leading-[1.14] text-center drop-shadow-xl">
           YOUR COSMIC <span className="text-[#CFC6F6]">IDENTITY.</span>
