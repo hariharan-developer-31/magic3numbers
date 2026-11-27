@@ -19,7 +19,9 @@ export default function ProfileGeneratorSection({
   onCalculate: (input: BirthInput) => void;
   isLoading: boolean;
 }) {
-  const [fullName, setFullName] = useState(user?.name || "Alexander Vance");
+  const [fullName, setFullName] = useState(
+    user?.name && user.name !== "Guest Explorer" ? user.name : ""
+  );
   const [birthDate, setBirthDate] = useState("1992-05-18");
   const [birthTime, setBirthTime] = useState("14:30");
   const [isTimeUnknown, setIsTimeUnknown] = useState(false);
@@ -28,9 +30,9 @@ export default function ProfileGeneratorSection({
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
   const [filteredCities, setFilteredCities] = useState<CityLocation[]>(CITIES_DATABASE.slice(0, 5));
 
-  // Sync user name if user signs in
+  // Sync user name if user signs in with a custom name
   React.useEffect(() => {
-    if (user?.name && fullName === "Alexander Vance") {
+    if (user?.name && user.name !== "Guest Explorer" && !fullName) {
       setFullName(user.name);
     }
   }, [user]);
@@ -89,15 +91,15 @@ export default function ProfileGeneratorSection({
           <div className="max-w-2xl mx-auto w-full">
             {/* Header & Signed-in status pill */}
             <div className="text-center mb-6 sm:mb-8">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-[#5B3BD1]/20 text-xs text-[#0D0B1A] mb-3 shadow-xs">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span>
+              <div className="inline-flex flex-wrap sm:flex-nowrap items-center justify-center gap-2 px-4 py-2 rounded-full bg-white/90 border border-[#5B3BD1]/20 text-xs text-[#0D0B1A] mb-3 shadow-xs max-w-full">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+                <span className="truncate max-w-[220px] sm:max-w-none">
                   Signed in as <strong>{user.name}</strong> ({user.email})
                 </span>
                 <button
                   type="button"
                   onClick={onSignOut}
-                  className="ml-2 text-[11px] text-[#5B3BD1] hover:underline flex items-center gap-1 font-semibold"
+                  className="ml-1 sm:ml-2 text-[11px] text-[#5B3BD1] hover:underline inline-flex items-center gap-1 font-semibold whitespace-nowrap flex-shrink-0"
                 >
                   <LogOut className="w-3 h-3" />
                   <span>Sign out</span>
@@ -131,7 +133,7 @@ export default function ProfileGeneratorSection({
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="e.g. Alexander Vance"
+                    placeholder="e.g. Maya Lin, Alexander, Hari..."
                     className="w-full box-border px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#E7E3FB]/40 border border-[#5B3BD1]/20 text-[#0D0B1A] placeholder-[#4A4568]/50 focus:outline-none focus:border-[#5B3BD1] focus:bg-white text-sm sm:text-base font-medium transition-all"
                   />
                 </div>

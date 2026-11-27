@@ -5,10 +5,9 @@ import { ArrowDown, Sparkles } from "lucide-react";
 
 export default function HeroSection({
   onGetStarted,
-  onExplore,
 }: {
   onGetStarted: () => void;
-  onExplore: () => void;
+  onExplore?: () => void;
 }) {
   return (
     <section
@@ -51,22 +50,14 @@ export default function HeroSection({
           Western geometric aspects, and Pythagorean vibration into one reproducible personal blueprint.
         </p>
 
-        {/* Compact, Centered CTA Buttons with Reduced Width */}
-        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
+        {/* Centered Primary CTA Button */}
+        <div className="mt-6 sm:mt-8 flex items-center justify-center w-full">
           <button
             onClick={onGetStarted}
-            className="group inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#5B3BD1] text-white text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all duration-300 ease-editorial hover:bg-[#482db5] hover:shadow-xl hover:shadow-[#5B3BD1]/40 active:scale-98 shadow-md w-full sm:w-auto"
+            className="group inline-flex items-center justify-center gap-2.5 px-8 py-3.5 sm:px-10 sm:py-4 rounded-full bg-[#5B3BD1] text-white text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all duration-300 ease-editorial hover:bg-[#482db5] hover:shadow-xl hover:shadow-[#5B3BD1]/40 active:scale-98 shadow-md"
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#CFC6F6] transition-transform group-hover:scale-125" />
-            <span>Discover Your 3 Numbers</span>
-          </button>
-
-          <button
-            onClick={onExplore}
-            className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs sm:text-sm font-semibold tracking-wider uppercase backdrop-blur-md transition-all duration-300 ease-editorial active:scale-98 w-full sm:w-auto shadow-sm"
-          >
-            <span>Explore Methodology</span>
-            <ArrowDown className="w-3.5 h-3.5 text-[#CFC6F6]" />
+            <Sparkles className="w-4 h-4 text-[#CFC6F6] transition-transform duration-500 group-hover:rotate-45 group-hover:scale-125" />
+            <span>Get Your 3 Numbers</span>
           </button>
         </div>
       </div>

@@ -158,7 +158,7 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
           className="lg:hidden fixed inset-0 z-50 bg-[#0D0B1A] text-white flex flex-col justify-between p-6 sm:p-8 animate-fade-in"
         >
           {/* Top Bar with Brand Logo and Close Button */}
-          <div className="flex items-center justify-between pb-6 border-b border-white/10">
+          <div className="flex items-center justify-between pb-4 border-b border-white/10">
             <BrandLogo textColor="text-white" />
             <button
               onClick={() => setMobileMenuOpen(false)}
@@ -169,8 +169,8 @@ export default function Navbar({ onScrollToCalculator }: { onScrollToCalculator?
             </button>
           </div>
 
-          {/* Navigation Links with Arrow Indicators */}
-          <div className="flex flex-col gap-4 py-8 overflow-y-auto">
+          {/* Navigation Links with Arrow Indicators - removed excess top space */}
+          <div className="flex flex-col gap-3 pt-3 pb-4 overflow-y-auto">
             <button
               onClick={() => scrollTo("three-pillars")}
               className="flex items-center justify-between text-left py-3 px-4 rounded-2xl hover:bg-white/5 border border-white/10 text-base font-semibold transition-colors"

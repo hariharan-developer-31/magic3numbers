@@ -170,7 +170,7 @@ export default function Home() {
       <Navbar onScrollToCalculator={scrollToCalculator} />
 
       {/* Section 1: Hero (strictly 100vh) */}
-      <HeroSection onGetStarted={scrollToCalculator} onExplore={scrollToPillars} />
+      <HeroSection onGetStarted={scrollToCalculator} />
 
       {/* Section 2: The Three Pillars */}
       <ThreePillarsSection />

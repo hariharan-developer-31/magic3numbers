@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 
 export default function DashboardSection({ analysis }: { analysis: FullCosmicAnalysis }) {
-  const [activeNumberCard, setActiveNumberCard] = useState<number>(0);
   const [selectedPlanetaryNum, setSelectedPlanetaryNum] = useState<number>(
     analysis.numerology.lifePathNumber
   );
@@ -35,15 +34,6 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
   const moonNakshatra = vedic?.moonNakshatra || "Anuradha";
   const moonPada = vedic?.moonPada || 1;
   const ascendantSign = vedic?.ascendantSign || "Sagittarius";
-
-  const handleNumberScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const el = e.currentTarget;
-    const cardWidth = el.scrollWidth / 3;
-    const index = Math.round(el.scrollLeft / cardWidth);
-    if (index >= 0 && index < 3) {
-      setActiveNumberCard(index);
-    }
-  };
 
   const currentPlanetaryDetail =
     synthesis.planetaryNumberLinks.find((p) => p.number === selectedPlanetaryNum) ||
@@ -63,7 +53,7 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
             <span>Blueprint Calculated &amp; Verified</span>
           </div>
           <h2 className="section-headline uppercase tracking-tight text-[#0D0B1A]">
-            Your Cosmic Blueprint: <span className="text-[#5B3BD1]">{input.fullName}</span>
+            Your Cosmic Blueprint: <span className="text-[#5B3BD1]">{input.fullName || "Your Cosmic Identity"}</span>
           </h2>
           <p className="mt-2 text-xs sm:text-sm text-[#4A4568] font-mono break-words">
             Born {input.birthDate} {input.isTimeUnknown ? "(Time Unverified)" : `@ ${input.birthTime}`}{" "}
@@ -134,157 +124,18 @@ export default function DashboardSection({ analysis }: { analysis: FullCosmicAna
             </div>
           </div>
 
-          {/* Mobile Swipe Instructions & Counter */}
-          <div className="flex md:hidden items-center justify-between text-xs text-[#4A4568] mb-3 px-1">
-            <span className="font-semibold uppercase tracking-wider text-[10px]">
-              Sacred Number {activeNumberCard + 1} of 3
-            </span>
-            <span className="text-[11px] flex items-center gap-1 font-semibold text-[#5B3BD1] animate-pulse">
-              Swipe cards &rarr;
-            </span>
-          </div>
-
-          {/* The 3 Cards - Swipeable on mobile, 3 cols on tablet/desktop - with top & bottom breathing room */}
-          <div
-            onScroll={handleNumberScroll}
-            className="flex md:grid md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory pt-4 pb-6 sm:pt-6 sm:pb-8 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0"
-          >
-            {/* Number 1: Life Path Number Card */}
-            <div className="w-[84vw] max-w-[340px] sm:w-[380px] md:w-auto flex-shrink-0 snap-center relative p-6 sm:p-8 rounded-[28px] bg-white/90 border border-white shadow-xl shadow-[#5B3BD1]/5 flex flex-col justify-between transition-all duration-300 md:hover:-translate-y-2">
-              <div>
-                <div className="flex items-center justify-between mb-5">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-[#5B3BD1]/30">01</span>
-                  <div className="w-10 h-10 rounded-2xl bg-[#E7E3FB] flex items-center justify-center text-[#5B3BD1]">
-                    <Sun className="w-5 h-5" />
-                  </div>
-                </div>
-
-                <span className="editorial-caption text-[#5B3BD1] block mb-1">
-                  1st Sacred Number &bull; Life Path
-                </span>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-[#5B3BD1]">
-                    Number {numerology.lifePathNumber}
-                  </span>
-                  {numerology.isMasterLifePath && (
-                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#5B3BD1] text-white font-bold tracking-wider uppercase">
-                      Master
-                    </span>
-                  )}
-                </div>
-                <span className="text-xs uppercase tracking-wider text-[#4A4568] font-bold block mt-1">
-                  Destiny Trajectory &bull; Solar Will
-                </span>
-
-                <div className="mt-4 p-3 rounded-xl bg-[#E7E3FB]/50 border border-[#5B3BD1]/15 text-xs text-[#0D0B1A] font-medium">
-                  Western Sun in {sunSign} &bull; Solar Conscious Drive
-                </div>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-[#5B3BD1]/10 text-xs text-[#4A4568] flex items-center justify-between">
-                <span>Solar Rising:</span>
-                <span className="font-bold text-[#0D0B1A]">{risingSign}</span>
-              </div>
-            </div>
-
-            {/* Number 2: Birthday Vibration Card */}
-            <div className="w-[84vw] max-w-[340px] sm:w-[380px] md:w-auto flex-shrink-0 snap-center relative p-6 sm:p-8 rounded-[28px] bg-[#3A1F8C] text-white border border-[#CFC6F6]/30 shadow-2xl flex flex-col justify-between overflow-hidden transition-all duration-300 md:hover:-translate-y-2">
-              <div className="absolute top-0 right-0 w-36 h-36 bg-[#5B3BD1] opacity-50 rounded-full blur-2xl pointer-events-none" />
-
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-5">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-[#CFC6F6]/40">02</span>
-                  <div className="w-10 h-10 rounded-2xl bg-[#5B3BD1]/60 border border-[#CFC6F6]/30 flex items-center justify-center text-[#CFC6F6]">
-                    <Moon className="w-5 h-5" />
-                  </div>
-                </div>
-
-                <span className="editorial-caption text-[#CFC6F6] block mb-1">
-                  2nd Sacred Number &bull; Birthday Vibration
-                </span>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-white">
-                    Number {numerology.birthdayNumber}
-                  </span>
-                </div>
-                <span className="text-xs uppercase tracking-wider text-[#CFC6F6] font-bold block mt-1">
-                  Innate Talent &bull; Lunar Asterism
-                </span>
-
-                <div className="mt-4 p-3 rounded-xl bg-[#5B3BD1]/40 border border-[#CFC6F6]/20 text-xs text-white/95 font-medium">
-                  Sidereal Moon in {moonSign} &bull; {moonNakshatra} (Pada {moonPada})
-                </div>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-[#CFC6F6]/20 text-xs text-[#CFC6F6]/80 flex items-center justify-between relative z-10">
-                <span>Vedic Lagna:</span>
-                <span className="font-bold text-white">{ascendantSign}</span>
-              </div>
-            </div>
-
-            {/* Number 3: Expression Number Card */}
-            <div className="w-[84vw] max-w-[340px] sm:w-[380px] md:w-auto flex-shrink-0 snap-center relative p-6 sm:p-8 rounded-[28px] bg-white/90 border border-white shadow-xl shadow-[#5B3BD1]/5 flex flex-col justify-between transition-all duration-300 md:hover:-translate-y-2">
-              <div>
-                <div className="flex items-center justify-between mb-5">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-[#5B3BD1]/30">03</span>
-                  <div className="w-10 h-10 rounded-2xl bg-[#E7E3FB] flex items-center justify-center text-[#5B3BD1]">
-                    <Hash className="w-5 h-5" />
-                  </div>
-                </div>
-
-                <span className="editorial-caption text-[#5B3BD1] block mb-1">
-                  3rd Sacred Number &bull; Expression / Calling
-                </span>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-[#5B3BD1]">
-                    Number {numerology.expressionNumber}
-                  </span>
-                  {numerology.isMasterExpression && (
-                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#5B3BD1] text-white font-bold tracking-wider uppercase">
-                      Master
-                    </span>
-                  )}
-                </div>
-                <span className="text-xs uppercase tracking-wider text-[#4A4568] font-bold block mt-1">
-                  Soul Expression &bull; Outer Potential
-                </span>
-
-                <div className="mt-4 p-3 rounded-xl bg-[#E7E3FB]/50 border border-[#5B3BD1]/15 text-xs text-[#0D0B1A] font-medium">
-                  Pythagorean Name Matrix &bull; Planetary Ruler {synthesis.dailyInsight.alignedPlanet}
-                </div>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-[#5B3BD1]/10 text-xs text-[#4A4568] flex items-center justify-between">
-                <span>Soul Urge Frequency:</span>
-                <span className="font-bold text-[#0D0B1A]">Number {numerology.soulUrgeNumber}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Mobile Swipe Indicators for 3 Numbers */}
-          <div className="flex md:hidden items-center justify-center gap-2 mt-4 mb-2">
-            {[0, 1, 2].map((idx) => (
-              <span
-                key={idx}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  activeNumberCard === idx ? "w-6 bg-[#5B3BD1]" : "w-1.5 bg-[#5B3BD1]/25"
-                }`}
-              />
-            ))}
-          </div>
-
           {/* =========================================================================
               REQUIREMENT: STEP-BY-STEP CONNECTED FLOW (ONE BY ONE LINKED TOGETHER)
               ========================================================================= */}
-          <div className="mt-12 sm:mt-16 p-6 sm:p-10 md:p-12 rounded-[32px] sm:rounded-[40px] bg-white/90 backdrop-blur-md border border-white shadow-xl shadow-[#5B3BD1]/5">
-            {/* Header */}
-            <div className="flex items-center gap-3.5 mb-8 sm:mb-12 pb-5 border-b border-[#5B3BD1]/15">
-              <div className="w-10 h-10 rounded-2xl bg-[#5B3BD1] text-white flex items-center justify-center shadow-md shadow-[#5B3BD1]/20">
-                <Layers className="w-5 h-5" />
+          <div className="mt-8 sm:mt-12 p-6 sm:p-10 md:p-12 rounded-[32px] sm:rounded-[40px] bg-white/90 backdrop-blur-md border border-white shadow-xl shadow-[#5B3BD1]/5">
+            {/* Header with perfectly proportioned square icon badge */}
+            <div className="flex items-center gap-3.5 sm:gap-4 mb-8 sm:mb-12 pb-5 border-b border-[#5B3BD1]/15">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-[#5B3BD1] to-[#3A1F8C] border border-[#5B3BD1]/30 text-white flex items-center justify-center shadow-md shadow-[#5B3BD1]/20 flex-shrink-0 aspect-square">
+                <Layers className="w-5 h-5 text-[#CFC6F6]" />
               </div>
-              <div>
-                <span className="editorial-caption text-[#5B3BD1]">Sequential Cosmic Circuit</span>
-                <h4 className="text-lg sm:text-2xl font-extrabold uppercase tracking-tight text-[#0D0B1A]">
+              <div className="min-w-0 flex-1">
+                <span className="editorial-caption text-[#5B3BD1] block">Sequential Cosmic Circuit</span>
+                <h4 className="text-lg sm:text-2xl font-extrabold uppercase tracking-tight text-[#0D0B1A] leading-tight">
                   How Your 3 Sacred Numbers Flow &bull; Connected Blueprint
                 </h4>
               </div>

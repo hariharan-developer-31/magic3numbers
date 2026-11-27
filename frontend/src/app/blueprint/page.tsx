@@ -13,7 +13,7 @@ import { BirthInput, FullCosmicAnalysis } from "@/types/astrology";
 import { performFullAnalysis } from "@/lib/engines/synthesis";
 
 const DEFAULT_INPUT: BirthInput = {
-  fullName: "Alexander Vance",
+  fullName: "Cosmic Explorer",
   birthDate: "1992-05-18",
   birthTime: "14:30",
   isTimeUnknown: false,
